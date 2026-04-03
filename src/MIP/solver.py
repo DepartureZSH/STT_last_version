@@ -133,17 +133,15 @@ class MIPSolver:
                     time_opts2 = self.class_to_time_options[c2]
                     for topt1, tidx1 in time_opts1:
                         bits1 = topt1['optional_time_bits']
-                        mat1 = topt1['optional_time']
                         # 检查课程1的这个时间在这个教室是否可用
-                        if not self._is_room_available(rid, time_mat=mat1):
+                        if not self._is_room_available(rid, time_bits=bits1):
                             continue
 
                         for topt2, tidx2 in time_opts2:
                             bits2 = topt2['optional_time_bits']
-                            mat2 = topt2['optional_time']
 
                             # 检查课程2的这个时间在这个教室是否可用
-                            if not self._is_room_available(rid, time_mat=mat2):
+                            if not self._is_room_available(rid, time_bits=bits2):
                                 continue
                             
                             if self._times_conflict(bits1, bits2):
@@ -170,11 +168,10 @@ class MIPSolver:
             # 创建 x[cid, time_idx, room_id]
             # for i, (tidx, topt, rid, valid) in enumerate(options):
             for topt, tidx in time_options:
-            #     time_bits = topt['optional_time_bits']
-                time_mat = topt['optional_time']
+                time_bits = topt['optional_time_bits']
                 for rid in room_options:
                     # 检查这个时间-教室组合是否可用
-                    if rid != 'dummy' and not self._is_room_available(rid, time_mat=time_mat):
+                    if rid != 'dummy' and not self._is_room_available(rid, time_bits=time_bits):
                         # 跳过不可用的组合
                         self.class_to_valid_options[cid, tidx, rid] = False
                         filtered_count += 1
@@ -375,7 +372,6 @@ class MIPSolver:
                     
                     for topt, tidx in time_opts:
                         bits = topt['optional_time_bits']
-                        mat = topt['optional_time']
                         
                         # 检查课程时间是否与不可用时间冲突
                         if self._time_conflicts_with_unavailable(
@@ -456,13 +452,11 @@ class MIPSolver:
                         if not self.class_to_valid_options[c1, tidx1, rid]:
                             continue
                         bits1 = topt1['optional_time_bits']
-                        mat1 = topt1['optional_time']
                         
                         for topt2, tidx2 in time_opts2:
                             if not self.class_to_valid_options[c2, tidx2, rid]:
                                 continue
                             bits2 = topt2['optional_time_bits']
-                            mat2 = topt2['optional_time']
                             
                             # 使用位运算快速检查时间冲突
                             if self._times_conflict(bits1, bits2):
