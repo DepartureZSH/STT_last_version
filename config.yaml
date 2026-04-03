@@ -1,0 +1,19 @@
+train:
+  MIP:
+    time_limit:    3600      # seconds per MIP solve call
+    Threads:       8
+    MIPGap:        0.01      # 1% optimality gap
+    PoolSolutions: 10        # keep up to 10 solutions in pool
+
+hybrid:
+  max_iterations:             100    # outer loop cap
+  max_attempts_per_community: 1000   # random sampler attempts per community per iter
+  rebuild_mip_every:          1      # rebuild full MIP model every N iterations
+  seed:                       42     # RNG seed for reproducibility
+
+config:
+  technique:        "MIP"
+  author:           "anonymous"
+  institution:      "anonymous"
+  country:          "anonymous"
+  include_students: false
