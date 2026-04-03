@@ -1,0 +1,5 @@
+__pycache__
+tests/*.png
+CLAUDE.md
+plan.md
+data/solutions/*
