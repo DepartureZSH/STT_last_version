@@ -1,0 +1,712 @@
+nohup: ignoring input
+[INFO] Loading instance: data/source/reduced/lums-spr18.xml
+Problem Name: lums-spr18, Days: 7, Weeks: 20, Slots/Day: 288
+[INFO]   lums-spr18: 487 classes, 73 rooms
+[INFO] === Hybrid Solver ===
+[INFO] === Hybrid Solver: decomposing instance ===
+[INFO]   Classes: 487 total | fixed=3 | community=0 | free=484
+[INFO]   Communities: 0
+[INFO]   No special-constraint communities — running pure MIP
+Set parameter LicenseID to value 2757917
+Set parameter TimeLimit to value 864000
+Set parameter Threads to value 32
+Set parameter MIPGap to value 0.05
+Set parameter MIPFocus to value 1
+Set parameter PoolSolutions to value 10
+[INFO] Initialized solver for problem: lums-spr18
+[INFO] Classes: 487, Rooms: 73
+[INFO] Hard constraints: 449
+[INFO] Soft constraints: 41
+
+=== Building MIP Model ===
+Building indices...
+Indexed 487 classes
+Creating variables...
+[INFO] Created 379909 x variables
+[INFO] Filtered out 179436 unavailable time-room combinations
+[INFO] Created 20291 y variables, 12665 w variables
+[INFO] Created 379909 x variables, 20291 y variables, 12665 w variables
+Adding primary constraints...
+Adding room capacity...
+  0%|          | 0/73 [00:00<?, ?it/s]  1%|▏         | 1/73 [00:00<00:32,  2.19it/s]  3%|▎         | 2/73 [00:01<00:54,  1.30it/s]  4%|▍         | 3/73 [01:41<53:55, 46.23s/it]  5%|▌         | 4/73 [01:51<36:24, 31.67s/it]  7%|▋         | 5/73 [03:36<1:06:05, 58.32s/it]  8%|▊         | 6/73 [05:03<1:16:05, 68.14s/it] 10%|▉         | 7/73 [06:51<1:28:58, 80.89s/it] 11%|█         | 8/73 [09:26<1:53:15, 104.54s/it] 12%|█▏        | 9/73 [10:07<1:30:32, 84.89s/it]  14%|█▎        | 10/73 [12:02<1:38:55, 94.21s/it] 15%|█▌        | 11/73 [13:17<1:31:04, 88.14s/it] 16%|█▋        | 12/73 [15:00<1:34:20, 92.80s/it] 18%|█▊        | 13/73 [16:36<1:33:45, 93.75s/it] 19%|█▉        | 14/73 [18:21<1:35:22, 97.00s/it] 21%|██        | 15/73 [18:56<1:15:49, 78.45s/it] 22%|██▏       | 16/73 [19:33<1:02:43, 66.03s/it] 23%|██▎       | 17/73 [21:01<1:07:39, 72.49s/it] 25%|██▍       | 18/73 [21:36<56:03, 61.15s/it]   26%|██▌       | 19/73 [21:40<39:37, 44.04s/it] 27%|██▋       | 20/73 [23:16<52:41, 59.65s/it] 29%|██▉       | 21/73 [24:36<57:01, 65.81s/it] 30%|███       | 22/73 [24:36<39:11, 46.11s/it] 32%|███▏      | 23/73 [24:36<26:56, 32.32s/it] 33%|███▎      | 24/73 [24:36<18:30, 22.66s/it] 34%|███▍      | 25/73 [24:37<12:43, 15.90s/it] 37%|███▋      | 27/73 [24:37<06:35,  8.61s/it] 38%|███▊      | 28/73 [24:38<04:59,  6.66s/it] 40%|███▉      | 29/73 [24:38<03:37,  4.95s/it] 41%|████      | 30/73 [24:38<02:36,  3.64s/it] 42%|████▏     | 31/73 [24:39<01:59,  2.84s/it] 45%|████▌     | 33/73 [24:52<03:05,  4.63s/it] 47%|████▋     | 34/73 [25:02<03:43,  5.74s/it] 48%|████▊     | 35/73 [26:46<19:37, 30.98s/it] 49%|████▉     | 36/73 [26:57<15:47, 25.60s/it] 51%|█████     | 37/73 [27:04<12:18, 20.52s/it] 52%|█████▏    | 38/73 [29:20<31:07, 53.36s/it] 53%|█████▎    | 39/73 [30:11<29:46, 52.54s/it] 55%|█████▍    | 40/73 [30:53<27:13, 49.51s/it] 56%|█████▌    | 41/73 [31:27<23:54, 44.82s/it] 58%|█████▊    | 42/73 [32:01<21:28, 41.56s/it] 59%|█████▉    | 43/73 [33:12<25:12, 50.41s/it] 60%|██████    | 44/73 [34:07<25:05, 51.92s/it] 62%|██████▏   | 45/73 [35:10<25:45, 55.20s/it] 63%|██████▎   | 46/73 [35:31<20:14, 44.98s/it] 66%|██████▌   | 48/73 [37:31<21:35, 51.81s/it] 67%|██████▋   | 49/73 [39:11<25:28, 63.67s/it] 68%|██████▊   | 50/73 [40:19<24:55, 65.02s/it] 73%|███████▎  | 53/73 [41:40<14:57, 44.88s/it] 74%|███████▍  | 54/73 [42:26<14:16, 45.06s/it] 77%|███████▋  | 56/73 [44:38<14:57, 52.78s/it] 78%|███████▊  | 57/73 [46:30<17:18, 64.88s/it] 79%|███████▉  | 58/73 [46:42<13:11, 52.80s/it] 81%|████████  | 59/73 [47:35<12:22, 53.03s/it] 82%|████████▏ | 60/73 [49:32<15:03, 69.47s/it] 84%|████████▎ | 61/73 [49:33<10:12, 51.00s/it] 88%|████████▊ | 64/73 [49:33<03:32, 23.64s/it] 90%|█████████ | 66/73 [49:34<01:50, 15.84s/it] 92%|█████████▏| 67/73 [49:35<01:17, 12.96s/it] 93%|█████████▎| 68/73 [52:25<03:55, 47.14s/it] 95%|█████████▍| 69/73 [52:26<02:24, 36.07s/it]100%|██████████| 73/73 [52:26<00:00, 43.10s/it]
+Primary constraints added
+Adding distribution constraints...
+  0%|          | 0/449 [00:00<?, ?it/s]  0%|          | 1/449 [00:01<10:51,  1.46s/it]  0%|          | 2/449 [00:04<16:29,  2.21s/it]  1%|          | 3/449 [00:11<33:57,  4.57s/it]  1%|          | 4/449 [00:11<21:32,  2.90s/it]  1%|          | 5/449 [00:12<14:53,  2.01s/it]  1%|▏         | 6/449 [00:17<23:01,  3.12s/it]  2%|▏         | 7/449 [00:50<1:33:32, 12.70s/it]  2%|▏         | 8/449 [00:50<1:04:25,  8.76s/it]  2%|▏         | 9/449 [00:50<44:54,  6.12s/it]    2%|▏         | 10/449 [00:53<36:50,  5.04s/it]  3%|▎         | 12/449 [01:01<33:12,  4.56s/it]  3%|▎         | 13/449 [01:09<39:10,  5.39s/it]  3%|▎         | 14/449 [01:17<45:05,  6.22s/it]  3%|▎         | 15/449 [01:27<52:13,  7.22s/it]  4%|▎         | 16/449 [01:35<52:54,  7.33s/it]  4%|▍         | 18/449 [01:35<30:10,  4.20s/it]  4%|▍         | 19/449 [01:36<23:32,  3.28s/it]  4%|▍         | 20/449 [01:37<19:48,  2.77s/it]  5%|▍         | 21/449 [01:42<23:23,  3.28s/it]  5%|▌         | 23/449 [01:42<13:22,  1.88s/it]  6%|▌         | 25/449 [01:42<08:22,  1.19s/it]  6%|▌         | 26/449 [01:43<07:28,  1.06s/it]  6%|▌         | 28/449 [01:44<06:06,  1.15it/s]  6%|▋         | 29/449 [01:45<06:22,  1.10it/s]  7%|▋         | 30/449 [01:45<05:24,  1.29it/s]  7%|▋         | 31/449 [01:45<04:34,  1.52it/s]  7%|▋         | 33/449 [01:46<03:11,  2.17it/s]  8%|▊         | 34/449 [01:47<03:46,  1.83it/s]  8%|▊         | 38/449 [01:47<01:55,  3.57it/s]  9%|▉         | 41/449 [01:49<03:15,  2.09it/s]  9%|▉         | 42/449 [01:50<03:03,  2.21it/s] 10%|▉         | 43/449 [01:50<02:48,  2.40it/s] 10%|▉         | 44/449 [01:50<02:33,  2.65it/s] 10%|█         | 45/449 [01:50<02:20,  2.87it/s] 10%|█         | 46/449 [01:51<02:27,  2.73it/s] 10%|█         | 47/449 [01:51<02:25,  2.76it/s] 11%|█         | 48/449 [01:52<02:32,  2.63it/s] 11%|█         | 49/449 [01:52<02:56,  2.26it/s] 11%|█         | 50/449 [01:53<04:27,  1.49it/s] 11%|█▏        | 51/449 [01:54<04:09,  1.59it/s] 12%|█▏        | 53/449 [01:54<02:25,  2.71it/s] 13%|█▎        | 57/449 [01:54<01:11,  5.45it/s] 13%|█▎        | 59/449 [01:54<01:07,  5.76it/s] 14%|█▎        | 61/449 [01:55<00:56,  6.84it/s] 14%|█▍        | 63/449 [01:55<01:07,  5.70it/s] 15%|█▍        | 66/449 [01:55<00:59,  6.48it/s] 15%|█▍        | 67/449 [01:56<01:10,  5.40it/s] 16%|█▌        | 70/449 [01:56<00:51,  7.32it/s] 16%|█▌        | 72/449 [01:56<00:48,  7.74it/s] 16%|█▋        | 73/449 [01:56<00:56,  6.71it/s] 17%|█▋        | 75/449 [01:57<00:45,  8.27it/s] 17%|█▋        | 77/449 [01:57<00:44,  8.40it/s] 17%|█▋        | 78/449 [01:57<00:50,  7.34it/s] 18%|█▊        | 79/449 [01:58<01:23,  4.44it/s] 18%|█▊        | 80/449 [01:58<01:54,  3.21it/s] 18%|█▊        | 81/449 [01:59<02:13,  2.76it/s] 18%|█▊        | 82/449 [01:59<01:58,  3.10it/s] 19%|█▊        | 84/449 [01:59<01:32,  3.93it/s] 19%|█▉        | 86/449 [02:00<01:29,  4.08it/s] 19%|█▉        | 87/449 [02:00<01:41,  3.56it/s] 20%|█▉        | 88/449 [02:00<01:37,  3.71it/s] 20%|█▉        | 89/449 [02:01<02:11,  2.73it/s] 20%|██        | 90/449 [02:01<02:05,  2.85it/s] 20%|██        | 91/449 [02:02<02:15,  2.65it/s] 21%|██        | 93/449 [02:02<01:43,  3.46it/s] 21%|██▏       | 96/449 [02:02<01:13,  4.82it/s] 22%|██▏       | 97/449 [02:03<01:12,  4.88it/s] 22%|██▏       | 98/449 [02:03<01:22,  4.28it/s] 22%|██▏       | 99/449 [02:03<01:39,  3.50it/s] 23%|██▎       | 103/449 [02:04<00:49,  7.00it/s] 23%|██▎       | 105/449 [02:04<00:42,  8.06it/s] 24%|██▍       | 107/449 [02:04<00:59,  5.75it/s] 25%|██▍       | 112/449 [02:05<00:40,  8.37it/s] 25%|██▌       | 114/449 [02:05<00:58,  5.70it/s] 26%|██▌       | 116/449 [02:06<00:56,  5.89it/s] 26%|██▌       | 117/449 [02:06<00:59,  5.58it/s] 26%|██▋       | 118/449 [02:06<01:00,  5.43it/s] 27%|██▋       | 119/449 [02:06<01:01,  5.33it/s] 27%|██▋       | 120/449 [02:07<01:10,  4.68it/s] 27%|██▋       | 123/449 [02:07<01:12,  4.53it/s] 28%|██▊       | 124/449 [02:08<01:30,  3.60it/s] 28%|██▊       | 125/449 [02:09<01:53,  2.85it/s] 28%|██▊       | 126/449 [02:09<02:00,  2.67it/s] 28%|██▊       | 127/449 [02:09<01:45,  3.06it/s] 29%|██▊       | 128/449 [02:09<01:36,  3.33it/s] 29%|██▊       | 129/449 [02:10<01:32,  3.45it/s] 29%|██▉       | 130/449 [02:10<01:45,  3.03it/s] 29%|██▉       | 132/449 [02:10<01:27,  3.64it/s] 30%|██▉       | 133/449 [02:11<01:28,  3.58it/s] 30%|██▉       | 134/449 [02:11<01:39,  3.15it/s] 30%|███       | 135/449 [02:12<01:47,  2.92it/s] 30%|███       | 136/449 [02:12<01:58,  2.63it/s] 31%|███       | 137/449 [02:12<01:41,  3.07it/s] 31%|███       | 138/449 [02:12<01:28,  3.50it/s] 31%|███       | 139/449 [02:13<01:51,  2.78it/s] 31%|███       | 140/449 [02:13<01:43,  2.98it/s] 31%|███▏      | 141/449 [02:14<01:39,  3.09it/s] 32%|███▏      | 142/449 [02:14<02:32,  2.01it/s] 32%|███▏      | 143/449 [02:15<02:39,  1.92it/s] 32%|███▏      | 144/449 [02:16<02:41,  1.89it/s] 33%|███▎      | 146/449 [02:16<02:07,  2.38it/s] 33%|███▎      | 147/449 [02:17<02:16,  2.22it/s] 33%|███▎      | 148/449 [02:17<02:23,  2.09it/s] 33%|███▎      | 149/449 [02:18<02:24,  2.07it/s] 33%|███▎      | 150/449 [02:18<02:29,  2.00it/s] 34%|███▎      | 151/449 [02:19<02:34,  1.93it/s] 34%|███▍      | 152/449 [02:19<02:38,  1.88it/s] 34%|███▍      | 153/449 [02:20<02:39,  1.86it/s] 34%|███▍      | 154/449 [02:21<02:41,  1.83it/s] 35%|███▍      | 155/449 [02:21<02:08,  2.29it/s] 35%|███▍      | 156/449 [02:21<01:48,  2.71it/s] 35%|███▍      | 157/449 [02:22<02:23,  2.04it/s] 35%|███▌      | 158/449 [02:22<02:27,  1.98it/s] 36%|███▌      | 161/449 [02:22<01:11,  4.04it/s] 36%|███▋      | 163/449 [02:23<00:51,  5.56it/s] 37%|███▋      | 168/449 [02:23<00:28,  9.99it/s] 38%|███▊      | 170/449 [02:23<00:32,  8.65it/s] 38%|███▊      | 172/449 [02:23<00:35,  7.83it/s] 39%|███▉      | 174/449 [02:24<00:40,  6.76it/s] 39%|███▉      | 175/449 [02:24<00:44,  6.21it/s] 39%|███▉      | 176/449 [02:24<00:47,  5.75it/s] 39%|███▉      | 177/449 [02:24<00:50,  5.38it/s] 40%|███▉      | 178/449 [02:25<00:52,  5.11it/s] 40%|███▉      | 179/449 [02:25<00:55,  4.89it/s] 41%|████      | 183/449 [02:25<00:34,  7.68it/s] 41%|████      | 184/449 [02:25<00:38,  6.80it/s] 41%|████      | 185/449 [02:26<00:43,  6.10it/s] 41%|████▏     | 186/449 [02:26<00:47,  5.51it/s] 42%|████▏     | 187/449 [02:26<00:50,  5.20it/s] 42%|████▏     | 188/449 [02:26<00:52,  4.97it/s] 42%|████▏     | 189/449 [02:27<00:47,  5.50it/s] 42%|████▏     | 190/449 [02:27<00:43,  6.01it/s] 43%|████▎     | 191/449 [02:27<00:40,  6.43it/s] 43%|████▎     | 192/449 [02:27<00:37,  6.79it/s] 43%|████▎     | 195/449 [02:27<00:21, 11.83it/s] 44%|████▍     | 197/449 [02:27<00:30,  8.26it/s] 44%|████▍     | 199/449 [02:28<00:31,  7.87it/s] 45%|████▍     | 201/449 [02:28<00:31,  7.82it/s] 45%|████▍     | 202/449 [02:28<00:32,  7.59it/s] 45%|████▌     | 203/449 [02:28<00:33,  7.39it/s] 45%|████▌     | 204/449 [02:28<00:32,  7.55it/s] 46%|████▌     | 205/449 [02:28<00:31,  7.71it/s] 46%|████▌     | 206/449 [02:29<00:32,  7.48it/s] 46%|████▋     | 208/449 [02:29<00:27,  8.61it/s] 47%|████▋     | 210/449 [02:29<00:25,  9.31it/s] 47%|████▋     | 212/449 [02:29<00:24,  9.78it/s] 48%|████▊     | 214/449 [02:29<00:24,  9.76it/s] 48%|████▊     | 215/449 [02:29<00:24,  9.67it/s] 48%|████▊     | 216/449 [02:30<00:24,  9.49it/s] 48%|████▊     | 217/449 [02:30<00:25,  9.12it/s] 49%|████▊     | 218/449 [02:30<00:25,  9.08it/s] 49%|████▉     | 219/449 [02:30<00:25,  8.96it/s] 49%|████▉     | 220/449 [02:30<00:25,  8.96it/s] 49%|████▉     | 222/449 [02:30<00:22, 10.11it/s] 50%|████▉     | 224/449 [02:30<00:18, 11.97it/s] 50%|█████     | 226/449 [02:31<00:19, 11.73it/s] 51%|█████     | 228/449 [02:31<00:19, 11.63it/s] 51%|█████     | 230/449 [02:31<00:19, 11.28it/s] 52%|█████▏    | 232/449 [02:31<00:20, 10.55it/s] 52%|█████▏    | 234/449 [02:31<00:20, 10.33it/s] 53%|█████▎    | 236/449 [02:31<00:20, 10.48it/s] 53%|█████▎    | 238/449 [02:32<00:20, 10.55it/s] 53%|█████▎    | 240/449 [02:32<00:19, 10.61it/s] 54%|█████▍    | 242/449 [02:32<00:19, 10.67it/s] 54%|█████▍    | 244/449 [02:32<00:17, 11.43it/s] 55%|█████▍    | 246/449 [02:32<00:17, 11.61it/s] 55%|█████▌    | 248/449 [02:33<00:17, 11.57it/s] 56%|█████▌    | 250/449 [02:33<00:17, 11.56it/s] 56%|█████▌    | 252/449 [02:33<00:16, 11.72it/s] 57%|█████▋    | 254/449 [02:33<00:15, 12.72it/s] 57%|█████▋    | 256/449 [02:33<00:13, 14.08it/s] 58%|█████▊    | 259/449 [02:33<00:11, 16.78it/s] 58%|█████▊    | 261/449 [02:33<00:11, 15.86it/s] 59%|█████▊    | 263/449 [02:34<00:12, 15.06it/s] 60%|█████▉    | 268/449 [02:34<00:08, 22.51it/s] 61%|██████    | 274/449 [02:34<00:05, 29.55it/s] 62%|██████▏   | 279/449 [02:34<00:04, 34.08it/s] 63%|██████▎   | 284/449 [02:34<00:04, 36.61it/s] 64%|██████▍   | 288/449 [02:34<00:04, 37.31it/s] 65%|██████▌   | 292/449 [02:34<00:04, 35.18it/s] 66%|██████▌   | 296/449 [02:34<00:05, 29.66it/s] 67%|██████▋   | 300/449 [02:35<00:05, 27.06it/s] 67%|██████▋   | 303/449 [02:35<00:05, 26.15it/s] 68%|██████▊   | 306/449 [02:35<00:05, 26.36it/s] 70%|███████   | 316/449 [02:35<00:03, 43.39it/s] 72%|███████▏  | 322/449 [02:35<00:02, 45.90it/s] 73%|███████▎  | 327/449 [02:35<00:02, 44.24it/s] 74%|███████▍  | 332/449 [02:35<00:02, 45.27it/s] 76%|███████▌  | 339/449 [02:35<00:02, 49.60it/s] 77%|███████▋  | 345/449 [02:36<00:02, 43.45it/s] 78%|███████▊  | 350/449 [02:36<00:02, 40.26it/s] 79%|███████▉  | 355/449 [02:36<00:02, 40.54it/s] 80%|████████  | 360/449 [02:36<00:02, 41.62it/s] 83%|████████▎ | 372/449 [02:36<00:01, 60.89it/s] 84%|████████▍ | 379/449 [02:36<00:01, 57.53it/s] 86%|████████▌ | 386/449 [02:36<00:01, 49.23it/s] 88%|████████▊ | 395/449 [02:37<00:00, 55.48it/s] 91%|█████████ | 407/449 [02:37<00:00, 69.55it/s] 94%|█████████▍| 422/449 [02:37<00:00, 88.76it/s] 96%|█████████▌| 432/449 [02:37<00:00, 84.97it/s]100%|██████████| 449/449 [02:37<00:00,  2.85it/s]
+  0%|          | 0/41 [00:00<?, ?it/s]  2%|▏         | 1/41 [00:00<00:07,  5.71it/s]  7%|▋         | 3/41 [00:00<00:04,  8.08it/s] 24%|██▍       | 10/41 [00:00<00:02, 14.92it/s] 29%|██▉       | 12/41 [00:01<00:03,  8.37it/s] 41%|████▏     | 17/41 [00:01<00:01, 13.16it/s] 46%|████▋     | 19/41 [00:02<00:04,  4.70it/s] 61%|██████    | 25/41 [00:03<00:01,  8.24it/s] 68%|██████▊   | 28/41 [00:03<00:01,  9.14it/s] 78%|███████▊  | 32/41 [00:03<00:00, 11.89it/s] 85%|████████▌ | 35/41 [00:03<00:00, 14.07it/s]100%|██████████| 41/41 [00:03<00:00, 11.57it/s]
+Distribution constraints added, 169848 penalty variables
+Setting objective...
+Objective set with 180110 terms
+[INFO] fix_assignments: pinned 3 classes (9 constraints added)
+
+=== Solving Model ===
+Gurobi Optimizer version 13.0.0 build v13.0.0rc1 (linux64 - "Ubuntu 24.04.3 LTS")
+
+CPU model: Intel(R) Xeon(R) Gold 5218 CPU @ 2.30GHz, instruction set [SSE2|AVX|AVX2|AVX512]
+Thread count: 32 physical cores, 64 logical processors, using up to 32 threads
+
+Non-default parameters:
+TimeLimit  864000
+MIPGap  0.05
+MIPFocus  1
+Threads  32
+
+Optimize a model with 266126333 rows, 583200 columns and 533528789 nonzeros (Min)
+Model fingerprint: 0x9693e53c
+Model has 487 linear objective coefficients
+Variable types: 0 continuous, 583200 integer (583200 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [1e+00, 4e+01]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 1e+00]
+
+---------------------------------------------------------------------------
+Multi-objectives: starting optimization (min) with 2 objectives... 
+---------------------------------------------------------------------------
+
+Multi-objectives: applying initial presolve...
+---------------------------------------------------------------------------
+
+Presolve removed 0 rows and 0 columns (presolve time = 69s)...
+Presolve removed 0 rows and 0 columns (presolve time = 78s)...
+Presolve removed 0 rows and 0 columns (presolve time = 83s)...
+Presolve removed 0 rows and 0 columns (presolve time = 92s)...
+Presolve removed 9 rows and 9 columns (presolve time = 97s)...
+Presolve removed 1533 rows and 1533 columns (presolve time = 150s)...
+Presolve removed 1533 rows and 1533 columns (presolve time = 151s)...
+Presolve removed 4231431 rows and 4777 columns (presolve time = 159s)...
+Presolve removed 4231431 rows and 4777 columns (presolve time = 161s)...
+Presolve removed 4231431 rows and 4777 columns (presolve time = 165s)...
+Presolve removed 4231431 rows and 4777 columns (presolve time = 176s)...
+Presolve removed 4231431 rows and 4777 columns (presolve time = 211s)...
+Presolve removed 4947099 rows and 4808 columns (presolve time = 307s)...
+Presolve removed 4947389 rows and 5098 columns (presolve time = 408s)...
+Presolve removed 4947389 rows and 5098 columns (presolve time = 416s)...
+Presolve removed 4947389 rows and 5098 columns (presolve time = 431s)...
+Presolve removed 4971101 rows and 5098 columns (presolve time = 452s)...
+Presolve removed 4971101 rows and 5098 columns (presolve time = 455s)...
+Presolve removed 4971101 rows and 5098 columns (presolve time = 460s)...
+Presolve removed 4971101 rows and 5098 columns (presolve time = 465s)...
+Presolve removed 4971101 rows and 5098 columns (presolve time = 470s)...
+Presolve removed 4971101 rows and 5098 columns (presolve time = 475s)...
+Presolve removed 4971101 rows and 5098 columns (presolve time = 480s)...
+Presolve removed 4971101 rows and 5098 columns (presolve time = 485s)...
+Presolve removed 4971101 rows and 5098 columns (presolve time = 490s)...
+Presolve removed 4971101 rows and 5098 columns (presolve time = 495s)...
+Presolve removed 4971101 rows and 5098 columns (presolve time = 500s)...
+Presolve removed 4971101 rows and 5098 columns (presolve time = 505s)...
+Presolve removed 4971101 rows and 5098 columns (presolve time = 510s)...
+Presolve removed 4971101 rows and 5098 columns (presolve time = 515s)...
+Presolve removed 4971101 rows and 5098 columns (presolve time = 520s)...
+Presolve removed 4971101 rows and 5098 columns (presolve time = 525s)...
+Presolve removed 4971101 rows and 5098 columns (presolve time = 530s)...
+Presolve removed 4971101 rows and 5098 columns (presolve time = 535s)...
+Presolve removed 4971101 rows and 5098 columns (presolve time = 540s)...
+Presolve removed 4971101 rows and 5098 columns (presolve time = 545s)...
+Presolve removed 4971101 rows and 5098 columns (presolve time = 550s)...
+Presolve removed 4971101 rows and 5098 columns (presolve time = 555s)...
+Presolve removed 4971101 rows and 5098 columns (presolve time = 560s)...
+Presolve removed 4971101 rows and 5098 columns (presolve time = 565s)...
+Presolve removed 4971101 rows and 5098 columns (presolve time = 570s)...
+Presolve removed 4971101 rows and 5098 columns (presolve time = 575s)...
+Presolve removed 4971101 rows and 5098 columns (presolve time = 580s)...
+Presolve removed 4971101 rows and 5098 columns (presolve time = 585s)...
+Presolve removed 4971101 rows and 5098 columns (presolve time = 590s)...
+Presolve removed 4971101 rows and 5098 columns (presolve time = 595s)...
+Presolve removed 4971101 rows and 5098 columns (presolve time = 600s)...
+Presolve removed 4971101 rows and 5098 columns (presolve time = 605s)...
+Presolve removed 4971101 rows and 5098 columns (presolve time = 610s)...
+Presolve removed 4971101 rows and 5098 columns (presolve time = 615s)...
+Presolve removed 4971101 rows and 5098 columns (presolve time = 620s)...
+Presolve removed 4971101 rows and 5098 columns (presolve time = 625s)...
+Presolve removed 4971101 rows and 5098 columns (presolve time = 630s)...
+Presolve removed 263685410 rows and 5098 columns (presolve time = 693s)...
+Presolve removed 263685410 rows and 5098 columns (presolve time = 700s)...
+Presolve removed 263685410 rows and 5098 columns (presolve time = 722s)...
+Presolve removed 263685410 rows and 5098 columns
+Presolve time: 721.81s
+Presolved: 2440923 rows, 578102 columns, 63495231 nonzeros
+---------------------------------------------------------------------------
+
+Multi-objectives: optimize objective 1 () ...
+---------------------------------------------------------------------------
+
+Found heuristic solution: objective 484.0000000
+Presolve removed 0 rows and 0 columns (presolve time = 8s)...
+Presolve removed 0 rows and 183050 columns (presolve time = 15s)...
+Presolve removed 145836 rows and 183050 columns (presolve time = 16s)...
+Presolve removed 145836 rows and 183050 columns (presolve time = 24s)...
+Presolve removed 145836 rows and 183583 columns (presolve time = 30s)...
+Presolve removed 146075 rows and 183583 columns (presolve time = 30s)...
+Presolve removed 146075 rows and 183583 columns (presolve time = 38s)...
+Presolve removed 146075 rows and 183583 columns (presolve time = 40s)...
+Presolve removed 146075 rows and 183583 columns (presolve time = 48s)...
+Presolve removed 146075 rows and 183628 columns (presolve time = 56s)...
+Presolve removed 146080 rows and 183628 columns (presolve time = 71s)...
+Presolve removed 146080 rows and 183628 columns (presolve time = 79s)...
+Presolve removed 146080 rows and 183677 columns (presolve time = 80s)...
+Presolve removed 146080 rows and 183679 columns (presolve time = 85s)...
+Presolve removed 146080 rows and 183679 columns (presolve time = 98s)...
+Presolve removed 146138 rows and 183737 columns (presolve time = 105s)...
+Presolve removed 146138 rows and 183737 columns (presolve time = 110s)...
+Presolve removed 146138 rows and 183737 columns (presolve time = 118s)...
+Presolve removed 146138 rows and 183737 columns (presolve time = 125s)...
+Presolve removed 146138 rows and 183737 columns (presolve time = 134s)...
+Presolve removed 160264 rows and 183737 columns (presolve time = 143s)...
+Presolve removed 160308 rows and 183737 columns (presolve time = 145s)...
+Presolve removed 160521 rows and 183737 columns (presolve time = 150s)...
+Presolve removed 160766 rows and 183737 columns (presolve time = 155s)...
+Presolve removed 161000 rows and 183737 columns (presolve time = 160s)...
+Presolve removed 161008 rows and 183737 columns (presolve time = 165s)...
+Presolve removed 161144 rows and 183737 columns (presolve time = 170s)...
+Presolve removed 161364 rows and 183737 columns (presolve time = 175s)...
+Presolve removed 161402 rows and 183737 columns (presolve time = 180s)...
+Presolve removed 161931 rows and 183737 columns (presolve time = 185s)...
+Presolve removed 162466 rows and 183737 columns (presolve time = 190s)...
+Presolve removed 162608 rows and 183737 columns (presolve time = 195s)...
+Presolve removed 162795 rows and 183737 columns (presolve time = 200s)...
+Presolve removed 162928 rows and 183737 columns (presolve time = 205s)...
+Presolve removed 202058 rows and 183737 columns (presolve time = 210s)...
+Presolve removed 208521 rows and 183737 columns (presolve time = 215s)...
+Presolve removed 210497 rows and 183737 columns (presolve time = 220s)...
+Presolve removed 211267 rows and 183737 columns (presolve time = 225s)...
+Presolve removed 212349 rows and 183737 columns (presolve time = 230s)...
+Presolve removed 212349 rows and 183737 columns (presolve time = 235s)...
+Presolve removed 212349 rows and 183737 columns (presolve time = 240s)...
+Presolve removed 212349 rows and 183737 columns (presolve time = 245s)...
+Presolve removed 212349 rows and 183737 columns (presolve time = 250s)...
+Presolve removed 212349 rows and 183737 columns (presolve time = 255s)...
+Presolve removed 212349 rows and 183737 columns (presolve time = 260s)...
+Presolve removed 212349 rows and 183737 columns (presolve time = 265s)...
+Presolve removed 213635 rows and 183742 columns (presolve time = 271s)...
+Presolve removed 213643 rows and 183742 columns (presolve time = 278s)...
+Presolve removed 213643 rows and 183742 columns (presolve time = 285s)...
+Presolve removed 213643 rows and 183742 columns (presolve time = 286s)...
+Presolve removed 213643 rows and 183742 columns (presolve time = 292s)...
+Presolve removed 213643 rows and 183742 columns (presolve time = 307s)...
+Presolve removed 213643 rows and 183742 columns (presolve time = 315s)...
+Presolve removed 213643 rows and 183742 columns (presolve time = 315s)...
+Presolve removed 213643 rows and 183747 columns (presolve time = 330s)...
+Presolve removed 213643 rows and 183747 columns (presolve time = 338s)...
+Presolve removed 213643 rows and 183747 columns (presolve time = 340s)...
+Presolve removed 213643 rows and 183747 columns (presolve time = 351s)...
+Presolve removed 213643 rows and 183747 columns (presolve time = 358s)...
+Presolve removed 213643 rows and 183747 columns (presolve time = 367s)...
+Presolve removed 213643 rows and 183747 columns (presolve time = 370s)...
+Presolve removed 213643 rows and 183747 columns (presolve time = 381s)...
+Presolve removed 213643 rows and 183747 columns (presolve time = 388s)...
+Presolve removed 213643 rows and 183747 columns (presolve time = 390s)...
+Presolve removed 213643 rows and 183747 columns (presolve time = 399s)...
+Presolve removed 213643 rows and 183747 columns (presolve time = 406s)...
+Presolve removed 213643 rows and 183747 columns (presolve time = 410s)...
+Presolve removed 213643 rows and 183747 columns (presolve time = 415s)...
+Presolve removed 213643 rows and 183747 columns (presolve time = 420s)...
+Presolve removed 213643 rows and 183747 columns (presolve time = 425s)...
+Presolve removed 213643 rows and 183747 columns (presolve time = 430s)...
+Presolve removed 213643 rows and 183747 columns (presolve time = 435s)...
+Presolve removed 213643 rows and 183747 columns (presolve time = 444s)...
+Presolve removed 213643 rows and 183747 columns (presolve time = 451s)...
+Presolve removed 213643 rows and 183747 columns (presolve time = 458s)...
+Presolve removed 213643 rows and 183747 columns (presolve time = 460s)...
+Presolve removed 213643 rows and 183747 columns (presolve time = 465s)...
+Presolve removed 213643 rows and 183747 columns (presolve time = 470s)...
+Presolve removed 213643 rows and 183747 columns (presolve time = 477s)...
+Presolve removed 213667 rows and 183801 columns (presolve time = 491s)...
+Presolve removed 213678 rows and 183811 columns (presolve time = 508s)...
+Presolve removed 213661 rows and 183794 columns
+Presolve time: 507.85s
+Presolved: 2227262 rows, 394308 columns, 61810313 nonzeros
+Found heuristic solution: objective 474.0000000
+Variable types: 0 continuous, 394308 integer (394308 binary)
+Found heuristic solution: objective 466.0000000
+
+Deterministic concurrent LP optimizer: primal simplex, dual simplex, and barrier
+Showing barrier log only...
+
+Root relaxation presolved: 394295 rows, 2621557 columns, 62204595 nonzeros
+
+Root barrier log...
+
+
+Barrier performed 0 iterations in 1520.81 seconds (1089.66 work units)
+Barrier solve interrupted - model solved by another algorithm
+
+Concurrent spin time: 14.12s
+
+Solved with dual simplex
+
+Root relaxation: objective 0.000000e+00, 22122 iterations, 185.46 seconds (61.10 work units)
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0    0.00000    0 2510  466.00000    0.00000   100%     - 2261s
+H    0     0                     155.0000000    0.00000   100%     - 2269s
+H    0     0                      28.0000000    0.00000   100%     - 2296s
+H    0     0                      27.0000000    0.00000   100%     - 2326s
+H    0     0                      11.0000000    0.00000   100%     - 2327s
+H    0     0                       6.0000000    0.00000   100%     - 2327s
+H    0     0                       5.0000000    0.00000   100%     - 2328s
+H    0     0                       2.0000000    0.00000   100%     - 2329s
+H    0     0                       1.0000000    0.00000   100%     - 2331s
+H    0     0                       0.0000000    0.00000  0.00%     - 2333s
+     0     0    0.00000    0 2510    0.00000    0.00000  0.00%     - 2333s
+
+Explored 1 nodes (51774 simplex iterations) in 2335.72 seconds (1448.40 work units)
+Thread count was 32 (of 64 available processors)
+
+Solution count 10: 0 1 2 ... 466
+
+Optimal solution found (tolerance 5.00e-02)
+Best objective 0.000000000000e+00, best bound 0.000000000000e+00, gap 0.0000%
+---------------------------------------------------------------------------
+
+Multi-objectives: optimize objective 2 () ...
+---------------------------------------------------------------------------
+
+
+Loaded user MIP start with objective 996091
+
+Presolve removed 0 rows and 0 columns (presolve time = 7s)...
+Presolve removed 0 rows and 29028 columns (presolve time = 15s)...
+Presolve removed 0 rows and 29028 columns (presolve time = 15s)...
+Presolve removed 0 rows and 29028 columns (presolve time = 24s)...
+Presolve removed 0 rows and 29512 columns (presolve time = 26s)...
+Presolve removed 1 rows and 29512 columns (presolve time = 30s)...
+Presolve removed 1 rows and 29512 columns (presolve time = 35s)...
+Presolve removed 1 rows and 29512 columns (presolve time = 42s)...
+Presolve removed 1 rows and 29557 columns (presolve time = 50s)...
+Presolve removed 1 rows and 29557 columns (presolve time = 51s)...
+Presolve removed 1 rows and 29557 columns (presolve time = 65s)...
+Presolve removed 1 rows and 29557 columns (presolve time = 74s)...
+Presolve removed 1 rows and 29607 columns (presolve time = 75s)...
+Presolve removed 1 rows and 29607 columns (presolve time = 80s)...
+Presolve removed 1 rows and 29607 columns (presolve time = 94s)...
+Presolve removed 394 rows and 30000 columns (presolve time = 102s)...
+Presolve removed 772 rows and 30378 columns (presolve time = 105s)...
+Presolve removed 772 rows and 30378 columns (presolve time = 116s)...
+Presolve removed 772 rows and 30378 columns (presolve time = 122s)...
+Presolve removed 772 rows and 30383 columns (presolve time = 133s)...
+Presolve removed 14848 rows and 30383 columns (presolve time = 143s)...
+Presolve removed 14852 rows and 30383 columns (presolve time = 145s)...
+Presolve removed 14990 rows and 30383 columns (presolve time = 150s)...
+Presolve removed 15112 rows and 30383 columns (presolve time = 155s)...
+Presolve removed 15257 rows and 30383 columns (presolve time = 160s)...
+Presolve removed 15259 rows and 30383 columns (presolve time = 165s)...
+Presolve removed 15311 rows and 30383 columns (presolve time = 170s)...
+Presolve removed 15392 rows and 30383 columns (presolve time = 175s)...
+Presolve removed 15554 rows and 30383 columns (presolve time = 180s)...
+Presolve removed 15554 rows and 30383 columns (presolve time = 185s)...
+Presolve removed 18368 rows and 30383 columns (presolve time = 190s)...
+Presolve removed 18612 rows and 30383 columns (presolve time = 195s)...
+Presolve removed 18678 rows and 30383 columns (presolve time = 200s)...
+Presolve removed 18767 rows and 30383 columns (presolve time = 205s)...
+Presolve removed 18837 rows and 30383 columns (presolve time = 210s)...
+Presolve removed 57349 rows and 30383 columns (presolve time = 215s)...
+Presolve removed 61726 rows and 30383 columns (presolve time = 220s)...
+Presolve removed 66016 rows and 30383 columns (presolve time = 225s)...
+Presolve removed 67034 rows and 30383 columns (presolve time = 230s)...
+Presolve removed 68123 rows and 30383 columns (presolve time = 235s)...
+Presolve removed 68123 rows and 30383 columns (presolve time = 240s)...
+Presolve removed 68123 rows and 30383 columns (presolve time = 245s)...
+Presolve removed 68123 rows and 30383 columns (presolve time = 250s)...
+Presolve removed 68123 rows and 30383 columns (presolve time = 255s)...
+Presolve removed 68123 rows and 30383 columns (presolve time = 260s)...
+Presolve removed 68123 rows and 30383 columns (presolve time = 265s)...
+Presolve removed 68123 rows and 30383 columns (presolve time = 270s)...
+Presolve removed 68123 rows and 30383 columns (presolve time = 275s)...
+Presolve removed 69008 rows and 30383 columns (presolve time = 282s)...
+Presolve removed 69029 rows and 30383 columns (presolve time = 290s)...
+Presolve removed 69029 rows and 30383 columns (presolve time = 296s)...
+Presolve removed 69029 rows and 30383 columns (presolve time = 304s)...
+Presolve removed 69029 rows and 30383 columns (presolve time = 305s)...
+Presolve removed 69035 rows and 30389 columns (presolve time = 319s)...
+Presolve removed 69035 rows and 30389 columns (presolve time = 328s)...
+Presolve removed 69035 rows and 30392 columns (presolve time = 330s)...
+Presolve removed 69035 rows and 30392 columns (presolve time = 344s)...
+Presolve removed 69111 rows and 30468 columns (presolve time = 352s)...
+Presolve removed 69111 rows and 30468 columns (presolve time = 355s)...
+Presolve removed 69111 rows and 30468 columns (presolve time = 365s)...
+Presolve removed 69111 rows and 30468 columns (presolve time = 372s)...
+Presolve removed 69111 rows and 30468 columns (presolve time = 383s)...
+Presolve removed 69111 rows and 30468 columns (presolve time = 385s)...
+Presolve removed 69111 rows and 30468 columns (presolve time = 390s)...
+Presolve removed 69111 rows and 30468 columns (presolve time = 399s)...
+Presolve removed 69111 rows and 30468 columns (presolve time = 406s)...
+Presolve removed 69111 rows and 30468 columns (presolve time = 421s)...
+Presolve removed 69111 rows and 30468 columns (presolve time = 430s)...
+Presolve removed 69111 rows and 30468 columns (presolve time = 440s)...
+Presolve removed 69111 rows and 30468 columns (presolve time = 448s)...
+Presolve removed 69111 rows and 30468 columns (presolve time = 450s)...
+Presolve removed 69111 rows and 30468 columns (presolve time = 461s)...
+Presolve removed 69111 rows and 30468 columns (presolve time = 467s)...
+Presolve removed 69111 rows and 30468 columns (presolve time = 478s)...
+Presolve removed 69111 rows and 30468 columns (presolve time = 480s)...
+Presolve removed 69111 rows and 30468 columns (presolve time = 485s)...
+Presolve removed 69111 rows and 30468 columns (presolve time = 493s)...
+Presolve removed 69111 rows and 30468 columns (presolve time = 499s)...
+Presolve removed 69111 rows and 30468 columns (presolve time = 501s)...
+Presolve removed 69111 rows and 30468 columns (presolve time = 508s)...
+Presolve removed 69111 rows and 30468 columns (presolve time = 512s)...
+Presolve removed 69111 rows and 30468 columns (presolve time = 519s)...
+Presolve removed 69111 rows and 30468 columns (presolve time = 520s)...
+Presolve removed 69111 rows and 30468 columns (presolve time = 525s)...
+Presolve removed 69111 rows and 30468 columns (presolve time = 530s)...
+Presolve removed 69111 rows and 30468 columns (presolve time = 535s)...
+Presolve removed 69111 rows and 30468 columns (presolve time = 540s)...
+Presolve removed 69111 rows and 30468 columns (presolve time = 545s)...
+Presolve removed 69111 rows and 30468 columns (presolve time = 550s)...
+Presolve removed 69111 rows and 30468 columns (presolve time = 558s)...
+Presolve removed 69111 rows and 30468 columns (presolve time = 565s)...
+Presolve removed 69111 rows and 30468 columns (presolve time = 567s)...
+Presolve removed 69111 rows and 30468 columns (presolve time = 572s)...
+Presolve removed 69111 rows and 30468 columns (presolve time = 575s)...
+Presolve removed 69111 rows and 30468 columns (presolve time = 580s)...
+Presolve removed 69111 rows and 30468 columns (presolve time = 592s)...
+Presolve removed 69135 rows and 30522 columns (presolve time = 604s)...
+Presolve removed 69145 rows and 30532 columns (presolve time = 619s)...
+Presolve removed 69128 rows and 30515 columns
+Presolve time: 619.28s
+Presolved: 2371796 rows, 547587 columns, 62179633 nonzeros
+Found heuristic solution: objective 995667.00000
+Variable types: 0 continuous, 547587 integer (547587 binary)
+Found heuristic solution: objective 2147.0000000
+
+Deterministic concurrent LP optimizer: primal simplex, dual simplex, and barrier
+Showing barrier log only...
+
+Root barrier log...
+
+Elapsed ordering time = 238s
+Elapsed ordering time = 278s
+Elapsed ordering time = 280s
+Elapsed ordering time = 285s
+Elapsed ordering time = 290s
+Elapsed ordering time = 295s
+Elapsed ordering time = 300s
+Elapsed ordering time = 305s
+Elapsed ordering time = 310s
+Elapsed ordering time = 315s
+Elapsed ordering time = 320s
+Elapsed ordering time = 325s
+Elapsed ordering time = 330s
+Elapsed ordering time = 341s
+Elapsed ordering time = 345s
+Elapsed ordering time = 350s
+Elapsed ordering time = 355s
+Elapsed ordering time = 360s
+Elapsed ordering time = 365s
+Elapsed ordering time = 370s
+Elapsed ordering time = 375s
+Elapsed ordering time = 380s
+Elapsed ordering time = 385s
+Elapsed ordering time = 390s
+Elapsed ordering time = 395s
+Elapsed ordering time = 400s
+Elapsed ordering time = 405s
+Elapsed ordering time = 410s
+Elapsed ordering time = 415s
+Elapsed ordering time = 420s
+Elapsed ordering time = 425s
+Elapsed ordering time = 430s
+Elapsed ordering time = 435s
+Elapsed ordering time = 440s
+Elapsed ordering time = 445s
+Elapsed ordering time = 450s
+Elapsed ordering time = 455s
+Elapsed ordering time = 460s
+Elapsed ordering time = 465s
+Elapsed ordering time = 470s
+Elapsed ordering time = 475s
+Elapsed ordering time = 480s
+Elapsed ordering time = 485s
+Elapsed ordering time = 490s
+Elapsed ordering time = 495s
+Elapsed ordering time = 500s
+Elapsed ordering time = 505s
+Elapsed ordering time = 510s
+Elapsed ordering time = 515s
+Elapsed ordering time = 520s
+Elapsed ordering time = 525s
+Elapsed ordering time = 530s
+Elapsed ordering time = 535s
+Elapsed ordering time = 540s
+Elapsed ordering time = 545s
+Elapsed ordering time = 550s
+Elapsed ordering time = 555s
+Elapsed ordering time = 560s
+Elapsed ordering time = 565s
+Elapsed ordering time = 570s
+Elapsed ordering time = 575s
+Elapsed ordering time = 580s
+Elapsed ordering time = 585s
+Elapsed ordering time = 590s
+Elapsed ordering time = 595s
+Elapsed ordering time = 600s
+Elapsed ordering time = 605s
+Elapsed ordering time = 610s
+Elapsed ordering time = 615s
+Elapsed ordering time = 620s
+Elapsed ordering time = 625s
+Elapsed ordering time = 630s
+Elapsed ordering time = 635s
+Elapsed ordering time = 640s
+Elapsed ordering time = 645s
+Elapsed ordering time = 650s
+Elapsed ordering time = 655s
+Elapsed ordering time = 660s
+Elapsed ordering time = 665s
+Elapsed ordering time = 670s
+Elapsed ordering time = 675s
+Elapsed ordering time = 680s
+Elapsed ordering time = 685s
+Elapsed ordering time = 690s
+Elapsed ordering time = 695s
+Elapsed ordering time = 700s
+Elapsed ordering time = 705s
+Elapsed ordering time = 710s
+Elapsed ordering time = 715s
+Elapsed ordering time = 720s
+Elapsed ordering time = 725s
+Elapsed ordering time = 730s
+Elapsed ordering time = 735s
+Elapsed ordering time = 740s
+Elapsed ordering time = 745s
+Elapsed ordering time = 750s
+Elapsed ordering time = 755s
+Elapsed ordering time = 760s
+Elapsed ordering time = 765s
+Elapsed ordering time = 770s
+Elapsed ordering time = 775s
+Elapsed ordering time = 780s
+Elapsed ordering time = 785s
+Elapsed ordering time = 790s
+Elapsed ordering time = 795s
+Elapsed ordering time = 800s
+Elapsed ordering time = 805s
+Elapsed ordering time = 810s
+Elapsed ordering time = 815s
+Elapsed ordering time = 820s
+Elapsed ordering time = 825s
+Elapsed ordering time = 830s
+Elapsed ordering time = 835s
+Elapsed ordering time = 840s
+Elapsed ordering time = 845s
+Elapsed ordering time = 850s
+Elapsed ordering time = 855s
+Elapsed ordering time = 860s
+Elapsed ordering time = 865s
+Elapsed ordering time = 870s
+Elapsed ordering time = 875s
+Elapsed ordering time = 880s
+Elapsed ordering time = 885s
+Elapsed ordering time = 890s
+Elapsed ordering time = 895s
+Elapsed ordering time = 900s
+Elapsed ordering time = 905s
+Elapsed ordering time = 910s
+Elapsed ordering time = 915s
+Elapsed ordering time = 920s
+Elapsed ordering time = 925s
+Elapsed ordering time = 930s
+Elapsed ordering time = 935s
+Elapsed ordering time = 940s
+Elapsed ordering time = 945s
+Elapsed ordering time = 950s
+Elapsed ordering time = 955s
+Elapsed ordering time = 960s
+Elapsed ordering time = 965s
+Elapsed ordering time = 970s
+Elapsed ordering time = 975s
+Elapsed ordering time = 980s
+Elapsed ordering time = 985s
+Elapsed ordering time = 990s
+Elapsed ordering time = 995s
+Elapsed ordering time = 1000s
+Elapsed ordering time = 1005s
+Elapsed ordering time = 1010s
+Elapsed ordering time = 1015s
+Elapsed ordering time = 1020s
+Elapsed ordering time = 1025s
+Elapsed ordering time = 1030s
+Elapsed ordering time = 1035s
+Elapsed ordering time = 1040s
+Elapsed ordering time = 1045s
+Elapsed ordering time = 1050s
+Elapsed ordering time = 1055s
+Elapsed ordering time = 1060s
+Elapsed ordering time = 1065s
+Elapsed ordering time = 1070s
+Elapsed ordering time = 1075s
+Elapsed ordering time = 1080s
+Elapsed ordering time = 1085s
+Elapsed ordering time = 1090s
+Elapsed ordering time = 1095s
+Elapsed ordering time = 1100s
+Elapsed ordering time = 1105s
+Elapsed ordering time = 1110s
+Elapsed ordering time = 1115s
+Elapsed ordering time = 1120s
+Elapsed ordering time = 1125s
+Elapsed ordering time = 1130s
+Elapsed ordering time = 1135s
+Elapsed ordering time = 1140s
+Elapsed ordering time = 1145s
+Elapsed ordering time = 1150s
+Elapsed ordering time = 1155s
+Elapsed ordering time = 1160s
+Elapsed ordering time = 1165s
+Elapsed ordering time = 1170s
+Elapsed ordering time = 1175s
+Elapsed ordering time = 1180s
+Elapsed ordering time = 1185s
+Elapsed ordering time = 1190s
+Elapsed ordering time = 1195s
+Elapsed ordering time = 1200s
+Elapsed ordering time = 1205s
+Elapsed ordering time = 1210s
+Elapsed ordering time = 1215s
+Elapsed ordering time = 1220s
+Elapsed ordering time = 1225s
+Elapsed ordering time = 1230s
+Elapsed ordering time = 1235s
+Elapsed ordering time = 1240s
+Elapsed ordering time = 1245s
+Elapsed ordering time = 1250s
+Elapsed ordering time = 1255s
+Elapsed ordering time = 1260s
+Elapsed ordering time = 1265s
+Elapsed ordering time = 1270s
+Elapsed ordering time = 1275s
+Elapsed ordering time = 1280s
+Elapsed ordering time = 1285s
+Elapsed ordering time = 1290s
+Elapsed ordering time = 1295s
+Elapsed ordering time = 1300s
+Elapsed ordering time = 1305s
+Elapsed ordering time = 1310s
+Elapsed ordering time = 1315s
+Elapsed ordering time = 1320s
+Elapsed ordering time = 1325s
+Elapsed ordering time = 1330s
+Elapsed ordering time = 1335s
+Elapsed ordering time = 1340s
+Elapsed ordering time = 1345s
+Elapsed ordering time = 1350s
+Elapsed ordering time = 1355s
+Elapsed ordering time = 1360s
+Elapsed ordering time = 1365s
+Elapsed ordering time = 1370s
+Elapsed ordering time = 1375s
+Elapsed ordering time = 1380s
+Elapsed ordering time = 1385s
+Elapsed ordering time = 1390s
+Elapsed ordering time = 1395s
+Elapsed ordering time = 1400s
+Elapsed ordering time = 1405s
+Elapsed ordering time = 1410s
+Elapsed ordering time = 1415s
+Elapsed ordering time = 1420s
+Elapsed ordering time = 1425s
+Elapsed ordering time = 1430s
+Elapsed ordering time = 1435s
+Elapsed ordering time = 1440s
+Elapsed ordering time = 1445s
+Elapsed ordering time = 1450s
+Elapsed ordering time = 1455s
+Elapsed ordering time = 1460s
+Elapsed ordering time = 1465s
+Elapsed ordering time = 1470s
+Elapsed ordering time = 1475s
+Elapsed ordering time = 1480s
+Elapsed ordering time = 1485s
+Elapsed ordering time = 1490s
+Elapsed ordering time = 1495s
+Elapsed ordering time = 1500s
+Elapsed ordering time = 1505s
+Elapsed ordering time = 1510s
+Elapsed ordering time = 1515s
+Elapsed ordering time = 1520s
+Elapsed ordering time = 1525s
+Elapsed ordering time = 1530s
+Elapsed ordering time = 1535s
+Elapsed ordering time = 1540s
+Elapsed ordering time = 1545s
+Elapsed ordering time = 1550s
+Elapsed ordering time = 1555s
+Elapsed ordering time = 1560s
+Elapsed ordering time = 1565s
+Elapsed ordering time = 1570s
+Elapsed ordering time = 1575s
+Elapsed ordering time = 1580s
+Elapsed ordering time = 1585s
+Elapsed ordering time = 1590s
+Elapsed ordering time = 1595s
+Elapsed ordering time = 1600s
+Elapsed ordering time = 1605s
+Elapsed ordering time = 1610s
+Elapsed ordering time = 1615s
+Elapsed ordering time = 1620s
+Elapsed ordering time = 1625s
+Elapsed ordering time = 1630s
+Elapsed ordering time = 1635s
+Elapsed ordering time = 1640s
+Elapsed ordering time = 1645s
+Elapsed ordering time = 1650s
+Elapsed ordering time = 1655s
+Elapsed ordering time = 1660s
+Elapsed ordering time = 1665s
+Elapsed ordering time = 1670s
+Elapsed ordering time = 1675s
+Elapsed ordering time = 1680s
+Elapsed ordering time = 1685s
+Elapsed ordering time = 1690s
+Elapsed ordering time = 1695s
+Elapsed ordering time = 1700s
+Elapsed ordering time = 1705s
+Elapsed ordering time = 1710s
+Elapsed ordering time = 1715s
+Elapsed ordering time = 1720s
+Elapsed ordering time = 1725s
+Elapsed ordering time = 1730s
+Elapsed ordering time = 1735s
+Elapsed ordering time = 1740s
+Elapsed ordering time = 1745s
+Elapsed ordering time = 1750s
+Elapsed ordering time = 1755s
+Elapsed ordering time = 1760s
+Elapsed ordering time = 1765s
+Elapsed ordering time = 1770s
+Elapsed ordering time = 1775s
+Elapsed ordering time = 1780s
+Elapsed ordering time = 1785s
+Elapsed ordering time = 1790s
+Elapsed ordering time = 1795s
+Elapsed ordering time = 1800s
+Elapsed ordering time = 1805s
+Elapsed ordering time = 1810s
+Elapsed ordering time = 1815s
+Elapsed ordering time = 1820s
+Elapsed ordering time = 1825s
+Elapsed ordering time = 1830s
+Elapsed ordering time = 1835s
+Elapsed ordering time = 1840s
+Elapsed ordering time = 1845s
+Elapsed ordering time = 1850s
+Elapsed ordering time = 1855s
+Elapsed ordering time = 1875s
+Elapsed ordering time = 1875s
+Elapsed ordering time = 1880s
+Elapsed ordering time = 1885s
+Elapsed ordering time = 1890s
+Elapsed ordering time = 1895s
+Elapsed ordering time = 1900s
+Elapsed ordering time = 1905s
+Elapsed ordering time = 1910s
+Elapsed ordering time = 1915s
+Elapsed ordering time = 1920s
+Elapsed ordering time = 1925s
+Elapsed ordering time = 1930s
+Elapsed ordering time = 1935s
+Elapsed ordering time = 1940s
+Elapsed ordering time = 1945s

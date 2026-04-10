@@ -25,6 +25,7 @@ Public API
 
 from __future__ import annotations
 
+import logging
 import random
 from typing import Dict, FrozenSet, List, Optional, Set, Tuple
 
@@ -82,10 +83,12 @@ class RandomCommunitySolver(CommunitySolverBase):
     DEFAULT_MAX_ATTEMPTS = 1000
 
     def __init__(self, reader, decomposer: SpecialConstraintDecomposer,
-                 seed: Optional[int] = None):
+                 seed: Optional[int] = None,
+                 logger: Optional[logging.Logger] = None):
         self.reader    = reader
         self.decomposer = decomposer
         self._rng      = random.Random(seed)
+        self.logger    = logger or logging.getLogger(__name__)
 
         # {community_id: set[NoGood]}
         self._no_goods: Dict[int, Set[NoGood]] = {}
@@ -102,6 +105,9 @@ class RandomCommunitySolver(CommunitySolverBase):
             "successes":             0,
             "exhausted":             0,
         }
+
+        # Track which constraints are causing rejections
+        self._constraint_violation_counts: Dict[str, int] = {}
 
     # ------------------------------------------------------------------ #
     # Public API                                                           #
@@ -187,6 +193,18 @@ class RandomCommunitySolver(CommunitySolverBase):
             # Check special constraints
             if not self.decomposer.check_special_constraints(community, assignment):
                 self._stats["special_constraint_rejections"] += 1
+                
+                # Track which constraints are violated (sample every 500 attempts for diagnostics)
+                if attempt % 500 == 0 and attempt > 0:
+                    violated = self.decomposer.get_violated_constraints(community, assignment)
+                    for cons, reason in violated:
+                        key = f"{cons['type']}"
+                        self._constraint_violation_counts[key] = self._constraint_violation_counts.get(key, 0) + 1
+                    if violated:
+                        self.logger.debug(
+                            f"  [attempt {attempt}/{max_attempts}] "
+                            f"Constraint violations: {[v[1] for v in violated]}"
+                        )
                 continue
 
             # Check no-good set
@@ -200,6 +218,11 @@ class RandomCommunitySolver(CommunitySolverBase):
 
         # max_attempts reached without a valid sample
         self._stats["exhausted"] += 1
+        if self._constraint_violation_counts:
+            self.logger.warning(
+                f"  Community {community.id}: exhausted after {max_attempts} attempts. "
+                f"Constraint violations: {dict(self._constraint_violation_counts)}"
+            )
         return None
 
     def add_no_good(self, community_id: int, assignment: Assignments) -> None:

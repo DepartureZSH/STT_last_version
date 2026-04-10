@@ -2012,7 +2012,7 @@ class MIPSolver:
         
         print(f"Objective set with {len(obj_terms)} terms")
 
-    def solve(self):
+    def solve(self, num_solutions=10):
         """求解模型"""
         print("\n=== Solving Model ===")
         start_time = time.time()
@@ -2039,17 +2039,26 @@ class MIPSolver:
             print(f"\n? Unknown status: {self.model.Status}")
             return None
         
-        return self.extract_solution()
+        return self.extract_solution(num_solutions=num_solutions)
     
-    def extract_solution(self):
-        """提取解决方案"""
+    def extract_solution(self, num_solutions=10):
+        """提取解决方案 - 智能提取完整高质量解"""
         if self.model.SolCount == 0:
             return None
         
-        print("\n=== Extracting Solution ===")
+        # Try to extract more solutions to get enough valid ones
+        # If we request 10 valid solutions, try up to min(2*10, SolCount) to account for invalids
+        max_attempt = min(num_solutions * 2, self.model.SolCount)
+        print(f"\n=== Extracting Solutions ===")
+        print(f"Requested: {num_solutions} valid solutions")
+        print(f"Available in pool: {self.model.SolCount}")
+        print(f"Will scan up to: {max_attempt} solutions to find valid ones")
         
         assignments_list = []
-        for i in range(min(self.model.SolCount, 10)):
+        valid_count = 0
+        invalid_count = 0
+        
+        for i in range(max_attempt):
             assignments = {}
             self.model.setParam('SolutionNumber', i)
             ones = []
@@ -2064,7 +2073,7 @@ class MIPSolver:
             self.model.addConstr(
                 gp.quicksum(1 - v for v in ones) + 
                 gp.quicksum(v for v in zeros) >= 1,
-                name=f"exist_solution"
+                name=f"exist_solution_{i}"
             )
 
             for cid in self.reader.classes.keys():
@@ -2098,13 +2107,32 @@ class MIPSolver:
                     assigned_room,
                     []  # student_ids (不实现学生分配)
                 )
-            assignments_list.append(assignments)
-                # if assigned_time:
-                #     bits = assigned_time['optional_time_bits']
-                    # print(f"  Class {cid}: weeks={bits[0][:8]}... days={bits[1]} "
-                    #     f"start={bits[2]} length={bits[3]} room={assigned_room}")
-            self.logger.info(f"\nAssigned {len([a for a in assignments.values() if a[0] is not None])} / {len(assignments)} classes")
+            
+            # Validate: only accept COMPLETE solutions (all classes assigned)
+            num_assigned = len([a for a in assignments.values() if a[0] is not None])
+            total_classes = len(assignments)
+            is_complete = (num_assigned == total_classes)
+            
+            if is_complete:
+                assignments_list.append(assignments)
+                valid_count += 1
+                self.logger.info(f"✓ Solution {valid_count}: Complete (all {total_classes} classes assigned)")
+                
+                # Stop early if we have enough valid solutions
+                if valid_count >= num_solutions:
+                    self.logger.info(f"✓ Found {valid_count} valid solutions. Stopping extraction.")
+                    break
+            else:
+                invalid_count += 1
+                self.logger.info(f"✗ Solution filtered: Incomplete ({num_assigned}/{total_classes} classes)")
         
+        if not assignments_list:
+            self.logger.warning(f"No complete solutions found in pool of {self.model.SolCount}.")
+            return None
+        
+        self.logger.info(f"\n=== Solution Quality Summary ===")
+        self.logger.info(f"✓ Valid (complete) solutions kept: {valid_count}")
+        self.logger.info(f"✗ Invalid (incomplete) solutions filtered: {invalid_count}")
         return assignments_list
 
     def load_model(self, model_path):

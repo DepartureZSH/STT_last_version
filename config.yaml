@@ -1,9 +1,10 @@
 train:
   MIP:
-    time_limit:    3600      # seconds per MIP solve call
-    Threads:       8
-    MIPGap:        0.01      # 1% optimality gap
-    PoolSolutions: 10        # keep up to 10 solutions in pool
+    time_limit:    60000     # seconds per MIP solve call (greatly increased for quality)
+    Threads:       32        # use more threads for faster solving
+    MIPGap:        0.05      # 5% optimality gap (relaxed to allow solution diversity)
+    PoolSolutions: 10        # collect up to 10 high-quality solutions
+    PoolSearchMode: 2        # 2 = focus on diverse solutions of high quality
 
 hybrid:
   max_iterations:             100    # outer loop cap

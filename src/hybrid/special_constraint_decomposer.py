@@ -435,6 +435,48 @@ class SpecialConstraintDecomposer:
 
         return True
 
+    def get_violated_constraints(
+        self,
+        community: Community,
+        assignments: Assignments,
+    ) -> List[Tuple[dict, str]]:
+        """
+        Return list of (constraint, reason) tuples for constraints violated
+        by the given assignment.
+
+        Useful for diagnosing why sampling fails.
+
+        Returns
+        -------
+        List[(constraint_dict, violation_reason), ...]
+        """
+        nrWeeks = self.reader.nrWeeks
+        nrDays  = self.reader.nrDays
+        violated = []
+
+        for cons in community.constraints:
+            base, param = _parse_constraint_type(cons["type"])
+            checker = _CHECKER_MAP.get(base)
+            if checker is None:
+                continue  # non-special constraint — skip
+
+            class_time_bits: Dict[str, tuple] = {}
+            for cid in cons["classes"]:
+                if cid not in assignments:
+                    continue
+                tidx, _ = assignments[cid]
+                tb = self.reader.classes[cid]["time_options"][tidx]["optional_time_bits"]
+                class_time_bits[cid] = tb
+
+            if not class_time_bits:
+                continue  # nothing assigned yet — trivially satisfied
+
+            if not checker(class_time_bits, param, nrWeeks, nrDays):
+                reason = f"{base}({param}) with {len(class_time_bits)} classes"
+                violated.append((cons, reason))
+
+        return violated
+
     def summary(self) -> str:
         """Return a human-readable decomposition summary."""
         result = self.classify_classes()

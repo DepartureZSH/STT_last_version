@@ -103,7 +103,7 @@ class HybridSolver:
 
     DEFAULT_HYBRID = {
         "max_iterations":             100,
-        "max_attempts_per_community": 1000,
+        "max_attempts_per_community": 5000,
         "rebuild_mip_every":          1,
         "seed":                       42,
     }
@@ -133,9 +133,14 @@ class HybridSolver:
     # Public API                                                           #
     # ------------------------------------------------------------------ #
 
-    def solve(self) -> Optional[HybridResult]:
+    def solve(self, num_solutions=10) -> Optional[HybridResult]:
         """
         Run the hybrid solve loop.
+
+        Parameters
+        ----------
+        num_solutions : int
+            Number of different solutions to extract from MIP (default 10, max 100)
 
         Returns
         -------
@@ -144,13 +149,14 @@ class HybridSolver:
         """
         wall_start = time.time()
         mip_calls = infeasible_calls = 0
+        num_solutions = min(max(num_solutions, 1), 100)  # Clamp to [1, 100]
 
         # ── Phase 1: decompose ───────────────────────────────────────────
         self.logger.info("=== Hybrid Solver: decomposing instance ===")
         self._decomposer  = SpecialConstraintDecomposer(self.reader)
         self._cls_result  = self._decomposer.classify_classes()
         self._comm_solver = RandomCommunitySolver(
-            self.reader, self._decomposer, seed=self._seed
+            self.reader, self._decomposer, seed=self._seed, logger=self.logger
         )
 
         communities     = self._cls_result.communities
@@ -167,7 +173,7 @@ class HybridSolver:
         # Edge case: no communities → pure MIP
         if not communities:
             self.logger.info("  No special-constraint communities — running pure MIP")
-            return self._run_pure_mip(fixed_assigns, wall_start)
+            return self._run_pure_mip(fixed_assigns, wall_start, num_solutions)
 
         # ── Main loop ────────────────────────────────────────────────────
         self._mip = self._build_mip()
@@ -181,20 +187,58 @@ class HybridSolver:
                 communities
             )
             if exhausted_comm is not None:
+                # Fallback: retry with higher attempt limit before giving up
+                retry_attempts = min(self._max_attempts * 5, 25000)
                 self.logger.warning(
-                    f"  Community {exhausted_comm.id} exhausted "
-                    f"(no valid assignment found in {self._max_attempts} attempts)"
+                    f"  Community {exhausted_comm.id} exhausted with "
+                    f"{self._max_attempts} attempts. Retrying with {retry_attempts}..."
                 )
-                return HybridResult(
-                    success=False,
-                    assignments_list=None,
-                    iterations=iteration,
-                    total_time_sec=time.time() - wall_start,
-                    mip_calls=mip_calls,
-                    infeasible_calls=infeasible_calls,
-                    community_stats=self._comm_solver.stats(),
-                    termination="exhausted",
+                community_assigns_retry, exhausted_comm_2 = self._sample_all_communities_with_attempts(
+                    communities, retry_attempts
                 )
+                if exhausted_comm_2 is not None:
+                    self.logger.warning(
+                        f"  Community {exhausted_comm_2.id} exhausted even with "
+                        f"{retry_attempts} attempts. Falling back to pure MIP (ignoring community constraints)."
+                    )
+                    # Fallback: solve with just fixed assignments, let MIP handle communities
+                    self._mip = self._build_mip()
+                    if fixed_assigns:
+                        self._mip.fix_assignments(fixed_assigns)
+                    assignments_list = self._mip.solve(num_solutions=num_solutions)
+                    if assignments_list is not None:
+                        self.logger.info(
+                            f"  ✓ Pure MIP fallback succeeded at iteration {iteration}"
+                        )
+                        return HybridResult(
+                            success=True,
+                            assignments_list=assignments_list,
+                            iterations=iteration,
+                            total_time_sec=time.time() - wall_start,
+                            mip_calls=mip_calls + 1,
+                            infeasible_calls=infeasible_calls,
+                            community_stats=self._comm_solver.stats(),
+                            termination="optimal_fallback" if self._mip.model.Status == 2 else "time_limit_fallback",
+                        )
+                    else:
+                        self.logger.error(
+                            f"  Pure MIP fallback also failed. No feasible solution found."
+                        )
+                        return HybridResult(
+                            success=False,
+                            assignments_list=None,
+                            iterations=iteration,
+                            total_time_sec=time.time() - wall_start,
+                            mip_calls=mip_calls + 1,
+                            infeasible_calls=infeasible_calls,
+                            community_stats=self._comm_solver.stats(),
+                            termination="exhausted_fallback",
+                        )
+                else:
+                    self.logger.info(
+                        f"  ✓ Retry successful. Found community assignment."
+                    )
+                    community_assigns = community_assigns_retry
 
             # Merge: fixed single-option classes + community assignments
             all_fixed: Assignments = {**fixed_assigns, **community_assigns}
@@ -212,7 +256,7 @@ class HybridSolver:
             self._mip.fix_assignments(all_fixed)
             mip_calls += 1
 
-            assignments_list = self._mip.solve()
+            assignments_list = self._mip.solve(num_solutions=num_solutions)
 
             iter_time = time.time() - iter_start
 
@@ -277,6 +321,22 @@ class HybridSolver:
             return
         self._mip.save_solution(result.assignments_list[0], output_path, self.config)
 
+    def save_solution_direct(self, assignments, output_path: str) -> None:
+        """
+        Save a single assignment dictionary directly to XML.
+        
+        Parameters
+        ----------
+        assignments : dict
+            {cid: (time_option, room_required, room_id, student_ids)}
+        output_path : str
+            Path to save the XML file
+        """
+        if self._mip is None:
+            self.logger.error("save_solution_direct: MIP solver not initialised")
+            return
+        self._mip.save_solution(assignments, output_path, self.config)
+
     # ------------------------------------------------------------------ #
     # Private helpers                                                      #
     # ------------------------------------------------------------------ #
@@ -288,13 +348,13 @@ class HybridSolver:
         return mip
 
     def _run_pure_mip(
-        self, fixed_assigns: Assignments, wall_start: float
+        self, fixed_assigns: Assignments, wall_start: float, num_solutions: int = 10
     ) -> HybridResult:
         """Fallback for instances with no special-constraint communities."""
-        mip = self._build_mip()
+        self._mip = self._build_mip()
         if fixed_assigns:
-            mip.fix_assignments(fixed_assigns)
-        assignments_list = mip.solve()
+            self._mip.fix_assignments(fixed_assigns)
+        assignments_list = self._mip.solve(num_solutions=num_solutions)
         success = assignments_list is not None
         return HybridResult(
             success=success,
@@ -318,10 +378,23 @@ class HybridSolver:
         (merged_assignments, None)       on success
         ({},                community)   if sampling for `community` is exhausted
         """
+        return self._sample_all_communities_with_attempts(communities, self._max_attempts)
+
+    def _sample_all_communities_with_attempts(
+        self, communities: List[Community], max_attempts: int
+    ) -> Tuple[Assignments, Optional[Community]]:
+        """
+        Sample an assignment for every community with explicit attempt limit.
+
+        Returns
+        -------
+        (merged_assignments, None)       on success
+        ({},                community)   if sampling for `community` is exhausted
+        """
         merged: Assignments = {}
         for comm in communities:
             assignment = self._comm_solver.sample(
-                comm, max_attempts=self._max_attempts
+                comm, max_attempts=max_attempts
             )
             if assignment is None:
                 return {}, comm

@@ -66,6 +66,10 @@ def _parse_args() -> argparse.Namespace:
         "--time-limit", type=int, default=None,
         help="MIP time limit in seconds (overrides config.yaml)",
     )
+    p.add_argument(
+        "--num-solutions", type=int, default=10,
+        help="Number of solutions to collect (default: 10, max: 100)",
+    )
     return p.parse_args()
 
 
@@ -93,8 +97,13 @@ def main() -> int:
 
     # ── Determine output path ─────────────────────────────────────────────────
     instance_stem = os.path.splitext(os.path.basename(args.instance))[0]
-    output_path   = args.output or os.path.join("solutions", f"{instance_stem}.xml")
-    os.makedirs(os.path.dirname(output_path) or ".", exist_ok=True)
+    output_dir    = os.path.join("solutions", instance_stem)
+    os.makedirs(output_dir, exist_ok=True)
+
+    # ── Validate num_solutions ───────────────────────────────────────────────
+    num_solutions = min(max(args.num_solutions, 1), 100)
+    if args.num_solutions != num_solutions:
+        logger.warning(f"Clamping num_solutions to {num_solutions}")
 
     # ── Load instance ─────────────────────────────────────────────────────────
     if not os.path.exists(args.instance):
@@ -110,34 +119,39 @@ def main() -> int:
 
     # ── Run solver ───────────────────────────────────────────────────────────
     if technique == "hybrid":
-        return _run_hybrid(reader, config, output_path, logger)
+        return _run_hybrid(reader, config, output_dir, instance_stem, num_solutions, logger)
     else:
-        return _run_mip(reader, config, output_path, logger)
+        return _run_mip(reader, config, output_dir, instance_stem, num_solutions, logger)
 
 
-def _run_mip(reader, config, output_path, logger) -> int:
+def _run_mip(reader, config, output_dir, instance_stem, num_solutions, logger) -> int:
     from src.MIP.solver import MIPSolver
 
     logger.info("=== Pure MIP Solver ===")
     solver = MIPSolver(reader, logger, config)
     solver.build_model()
-    assignments_list = solver.solve()
+    assignments_list = solver.solve(num_solutions=num_solutions)
 
-    if assignments_list is None:
+    if assignments_list is None or len(assignments_list) == 0:
         logger.error("MIP: no feasible solution found")
         return 1
 
-    solver.save_solution(assignments_list[0], output_path, config)
-    logger.info(f"Solution saved to: {output_path}")
+    # Save all solutions
+    for idx, assignments in enumerate(assignments_list, 1):
+        output_path = os.path.join(output_dir, f"solution{idx}_{instance_stem}.xml")
+        solver.save_solution(assignments, output_path, config)
+        logger.info(f"Solution {idx}/{len(assignments_list)} saved to: {output_path}")
+
+    logger.info(f"✓ {len(assignments_list)} solutions saved to: {output_dir}/")
     return 0
 
 
-def _run_hybrid(reader, config, output_path, logger) -> int:
+def _run_hybrid(reader, config, output_dir, instance_stem, num_solutions, logger) -> int:
     from src.hybrid.hybrid_solver import HybridSolver
 
     logger.info("=== Hybrid Solver ===")
     hybrid = HybridSolver(reader, config, logger)
-    result = hybrid.solve()
+    result = hybrid.solve(num_solutions=num_solutions)
 
     logger.info(
         f"\nHybrid result: success={result.success}, "
@@ -149,12 +163,17 @@ def _run_hybrid(reader, config, output_path, logger) -> int:
     )
     logger.info(f"Sampling stats: {result.community_stats}")
 
-    if not result.success:
+    if not result.success or result.assignments_list is None or len(result.assignments_list) == 0:
         logger.error("Hybrid: no feasible solution found")
         return 1
 
-    hybrid.save_solution(result, output_path)
-    logger.info(f"Solution saved to: {output_path}")
+    # Save all solutions
+    for idx, assignments in enumerate(result.assignments_list, 1):
+        output_path = os.path.join(output_dir, f"solution{idx}_{instance_stem}.xml")
+        hybrid.save_solution_direct(assignments, output_path)
+        logger.info(f"Solution {idx}/{len(result.assignments_list)} saved to: {output_path}")
+
+    logger.info(f"✓ {len(result.assignments_list)} solutions saved to: {output_dir}/")
     return 0
 
 
