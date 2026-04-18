@@ -11,6 +11,12 @@ hybrid:
   rebuild_mip_every:          1      # rebuild full MIP model every N iterations
   seed:                       42     # RNG seed for reproducibility
 
+divide_conquer:
+  max_partition_size:  50    # max classes per BFS partition
+  max_retries:         100   # backtrack budget (conflict resolution rounds)
+  use_soft_edges:      false # include soft constraints in BFS graph
+  prefer_larger_first: true  # solve larger partitions first (they claim rooms first)
+
 config:
   technique:        "MIP"
   author:           "anonymous"

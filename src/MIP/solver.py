@@ -53,6 +53,13 @@ class MIPSolver:
         self._fix_constr_to_cid: dict = {}       # {constr_name: cid}
         self._fixed_assignments: dict = {}       # {cid: (tidx, rid)} currently pinned
 
+        # Divide-and-conquer submodel support
+        # Set by build_submodel(); None means "use all classes / all constraints"
+        self._active_classes: set = None         # subset of class IDs to model
+        self._active_hard_constraints: list = None  # hard constraints to enforce
+        self._active_soft_constraints: list = None  # soft constraints to enforce
+        self._forbid_constraints: list = []      # constraints added by forbid_time_room()
+
         self.logger.info(f"Initialized solver for problem: {self.reader.problem_name}")
         self.logger.info(f"Classes: {len(self.reader.classes)}, Rooms: {len(self.reader.rooms)}")
         self.logger.info(f"Hard constraints: {len(self.reader.distributions['hard_constraints'])}")
@@ -85,7 +92,10 @@ class MIPSolver:
         """构建课程到时间/教室选项的索引"""
         print("Building indices...")
         
+        active = self._active_classes  # None → all classes
         for cid, class_data in self.reader.classes.items():
+            if active is not None and cid not in active:
+                continue
             # 时间选项
             time_options = []
             for idx, topt in enumerate(class_data['time_options']):
@@ -153,11 +163,14 @@ class MIPSolver:
     def _create_variables(self):
         """创建决策变量"""
         print("Creating variables...")
-        
+
         var_count = 0
         filtered_count = 0
-        
+
+        active = self._active_classes
         for cid in self.reader.classes.keys():
+            if active is not None and cid not in active:
+                continue
             time_options = self.class_to_time_options[cid]
             room_options = self.class_to_room_options[cid]
             self.u[cid] = self.model.addVar(
@@ -248,70 +261,62 @@ class MIPSolver:
     def _add_primary_constraints(self):
         """添加基础调度约束"""
         print("Adding primary constraints...")
-        
+
+        active = self._active_classes
+
         # 1. 每个课程必须分配恰好一个时间和教室
         for cid in self.reader.classes.keys():
+            if active is not None and cid not in active:
+                continue
             time_options = self.class_to_time_options[cid]
             room_options = self.class_to_room_options[cid]
-            
-            # 收集所有有效的x变量
+
             valid_x_vars = []
             for _, tidx in time_options:
                 for rid in room_options:
                     if (cid, tidx, rid) in self.x:
                         valid_x_vars.append(self.x[cid, tidx, rid])
-            
+
             if valid_x_vars:
-                # self.model.addConstr(
-                #     gp.quicksum(valid_x_vars) == 1,
-                #     name=f"assign_{cid}"
-                # )
                 self.model.addConstr(
-                    # gp.quicksum(valid_x_vars) == 1,
                     gp.quicksum(valid_x_vars) + self.u[cid] == 1,
                     name=f"assign_{cid}"
                 )
             else:
-                # 强制：这门课只能 unassigned
                 self.model.addConstr(
                     self.u[cid] == 1,
                     name=f"assign_unavail_{cid}"
                 )
                 self.logger.info(f"Warning: Class {cid} has no valid time-room combinations!")
-            # self.model.addConstr(
-            #     gp.quicksum(
-            #         self.x[cid, tidx, rid]
-            #         for _, tidx in time_options
-            #         for rid in room_options
-            #     ) == 1,
-            #     name=f"assign_{cid}"
-            # )
-        
+
         # 2. 链接 x 和 y 变量
         for cid in self.reader.classes.keys():
+            if active is not None and cid not in active:
+                continue
             time_options = self.class_to_time_options[cid]
             room_options = self.class_to_room_options[cid]
-            
+
             for _, tidx in time_options:
-                x_vars = [self.x[cid, tidx, rid] 
-                     for rid in room_options 
-                     if (cid, tidx, rid) in self.x]
-            
+                x_vars = [self.x[cid, tidx, rid]
+                          for rid in room_options
+                          if (cid, tidx, rid) in self.x]
                 if x_vars:
                     self.model.addConstr(
                         gp.quicksum(x_vars) == self.y[cid, tidx],
                         name=f"link_y_{cid}_{tidx}"
                     )
-        
+
         # 3. 链接 x 和 w 变量
         for cid in self.reader.classes.keys():
+            if active is not None and cid not in active:
+                continue
             time_options = self.class_to_time_options[cid]
             room_options = self.class_to_room_options[cid]
-            
+
             for rid in room_options:
-                x_vars = [self.x[cid, tidx, rid] 
-                     for _, tidx in time_options 
-                     if (cid, tidx, rid) in self.x]
+                x_vars = [self.x[cid, tidx, rid]
+                          for _, tidx in time_options
+                          if (cid, tidx, rid) in self.x]
                 if x_vars:
                     self.model.addConstr(
                         gp.quicksum(x_vars) == self.w[cid, rid],
@@ -610,21 +615,34 @@ class MIPSolver:
     def _add_distribution_constraints(self):
         """添加分布约束"""
         print("Adding distribution constraints...")
-        
-        # 硬约束
-        for constraint in tqdm(self.reader.distributions['hard_constraints'], total=len(self.reader.distributions['hard_constraints'])):
+
+        # Use override lists when building a submodel; fall back to reader data
+        hard_list = (
+            self._active_hard_constraints
+            if self._active_hard_constraints is not None
+            else self.reader.distributions['hard_constraints']
+        )
+        soft_list = (
+            self._active_soft_constraints
+            if self._active_soft_constraints is not None
+            else self.reader.distributions['soft_constraints']
+        )
+
+        for constraint in tqdm(hard_list, total=len(hard_list)):
             self._add_single_distribution_constraint(constraint, is_hard=True)
-        
-        # 软约束
-        for constraint in tqdm(self.reader.distributions['soft_constraints'], total=len(self.reader.distributions['soft_constraints'])):
+
+        for constraint in tqdm(soft_list, total=len(soft_list)):
             self._add_single_distribution_constraint(constraint, is_hard=False)
-        
+
         print(f"Distribution constraints added, {len(self.penalty_vars)} penalty variables")
     
     def _add_single_distribution_constraint(self, constraint, is_hard):
         """添加单个分布约束"""
         ctype = constraint['type']
-        classes = constraint['classes']
+        # When running as a submodel, filter out classes not indexed
+        classes = [c for c in constraint['classes'] if c in self.class_to_time_options]
+        if not classes:
+            return
         penalty = constraint.get('penalty', 0)
         
         # 根据约束类型调用相应的处理函数
@@ -991,7 +1009,11 @@ class MIPSolver:
                     week_int1 = int(week_bits1, 2)
                     week_int2 = int(week_bits2, 2)
                     and_week = week_int1 & week_int2
-                    if (start1 + end1 <= start2) or (start2 + end2 <= start1) or (and_days == 0) or (and_week == 0):
+                    # ITC 2019: back-to-back (end1 == start2) is also a conflict
+                    # for NotOverlap — students cannot be in two places at once
+                    # even if the times are exactly adjacent.  Use strict < so
+                    # back-to-back does NOT satisfy the "no conflict" condition.
+                    if (start1 + end1 < start2) or (start2 + end2 < start1) or (and_days == 0) or (and_week == 0):
                         continue
                     else:
                         if is_hard:
@@ -1085,8 +1107,10 @@ class MIPSolver:
                     week_int2 = int(week_bits2, 2)
                     and_week = week_int1 & week_int2
 
-                    # Overlap
-                    if (start1 < start2 + end2) and (start2 < start1 + end1) and (not and_days == 0) and (not and_week == 0):
+                    # Overlap — ITC 2019: back-to-back (end1==start2) counts as
+                    # conflicting for SameAttendees (students need ≥1 slot gap).
+                    # Use <= so that adjacent slots also trigger the constraint.
+                    if (start1 <= start2 + end2) and (start2 <= start1 + end1) and (not and_days == 0) and (not and_week == 0):
                         if is_hard:
                             self.model.addConstr(
                                 self.y[c1, tidx1] + self.y[c2, tidx2] <= 1,
@@ -1883,6 +1907,8 @@ class MIPSolver:
         for cid in classes:
             if cid not in self.reader.classes:
                 continue
+            if cid not in self.class_to_time_options:
+                continue
             class_day_events[cid] = {}
             for topt, tidx in self.class_to_time_options[cid]:
                 weeks_bits, days_bits, start, length = topt['optional_time_bits']
@@ -1960,29 +1986,38 @@ class MIPSolver:
         """设置目标函数"""
         print("Setting objective...")
         
+        active = self._active_classes
+
         # Priority 1: Minimize unassigned
-        unassigned_obj = gp.quicksum(self.u[cid] for cid in self.reader.classes.keys())
+        unassigned_obj = gp.quicksum(
+            self.u[cid] for cid in self.reader.classes.keys()
+            if active is None or cid in active
+        )
         self.model.setObjectiveN(unassigned_obj, index=0, priority=10)
 
         obj_terms = []
-        
-        BIG_M = 100000  # 或至少 > 所有 soft penalty 之和
+
+        BIG_M = 100000
 
         # 1. 时间惩罚
         opt_weights = self.reader.optimization
         time_weight = opt_weights.get('time', 0) if opt_weights else 0
-        
+
         for cid in self.reader.classes.keys():
+            if active is not None and cid not in active:
+                continue
             time_opts = self.class_to_time_options[cid]
             for topt, tidx in time_opts:
                 penalty = topt.get('penalty', 0)
                 if penalty > 0:
                     obj_terms.append(time_weight * penalty * self.y[cid, tidx])
-        
+
         # 2. 教室惩罚
         room_weight = opt_weights.get('room', 0) if opt_weights else 0
-        
+
         for cid in self.reader.classes.keys():
+            if active is not None and cid not in active:
+                continue
             class_data = self.reader.classes[cid]
             for ropt in class_data['room_options']:
                 rid = ropt['id']
@@ -2068,6 +2103,9 @@ class MIPSolver:
             )
 
             for cid in self.reader.classes.keys():
+                # When running as a submodel, only the active classes are indexed
+                if cid not in self.class_to_time_options:
+                    continue
                 class_data = self.reader.classes[cid]
                 time_opts = self.class_to_time_options[cid]
                 room_opts = self.class_to_room_options[cid]
@@ -2272,3 +2310,276 @@ class MIPSolver:
         self._fixed_assignments.clear()
         self.model.update()
         self.logger.info("reset_fixed: all fixed-assignment constraints removed")
+
+    # ------------------------------------------------------------------ #
+    # Divide-and-conquer submodel interface                               #
+    # ------------------------------------------------------------------ #
+
+    def build_submodel(
+        self,
+        class_ids: set,
+        hard_constraints: list,
+        soft_constraints: list,
+    ) -> None:
+        """
+        Build a MIP model for a *subset* of classes (one partition).
+
+        All existing build_model() logic is reused; the three ``_active_*``
+        attributes act as filters so only the specified classes and their
+        intra-partition constraints are added.
+
+        Parameters
+        ----------
+        class_ids         : set of class IDs to include
+        hard_constraints  : intra-partition hard constraints (pre-filtered)
+        soft_constraints  : intra-partition soft constraints (pre-filtered)
+        """
+        self._active_classes = set(class_ids)
+        self._active_hard_constraints = hard_constraints
+        self._active_soft_constraints = soft_constraints
+        try:
+            self.build_model()
+        finally:
+            # Always clear the overrides so accidental reuse of the solver
+            # for a full model still works correctly.
+            self._active_classes = None
+            self._active_hard_constraints = None
+            self._active_soft_constraints = None
+
+    def get_simple_assignments(self) -> dict:
+        """
+        Extract {cid: (tidx, rid_or_None)} from the most recently solved model.
+
+        Returns an empty dict if no solution is available.
+        """
+        if self.model.SolCount == 0:
+            return {}
+        result = {}
+        for (cid, tidx, rid), var in self.x.items():
+            try:
+                if var.X > 0.5:
+                    result[cid] = (tidx, None if rid == 'dummy' else rid)
+            except Exception:
+                pass
+        return result
+
+    def forbid_time_room(
+        self,
+        cid: str,
+        tidx: int,
+        rid: str = None,
+    ) -> bool:
+        """
+        Add a constraint that forbids class `cid` from using the given
+        time option (and, optionally, the specific room).
+
+        If `rid` is given and the x[cid,tidx,rid] variable exists, only
+        that room-time combination is forbidden (the class can still use a
+        different room at the same time).
+
+        If `rid` is None (or the x variable doesn't exist), the entire time
+        option y[cid,tidx] is forbidden.
+
+        Returns True if a constraint was successfully added, False otherwise.
+        """
+        added = False
+
+        if rid is not None and rid != 'dummy' and (cid, tidx, rid) in self.x:
+            name = f"forbid_x_{cid}_{tidx}_{rid}"
+            c = self.model.addConstr(self.x[cid, tidx, rid] == 0, name=name)
+            self._forbid_constraints.append(c)
+            added = True
+        elif (cid, tidx) in self.y:
+            name = f"forbid_y_{cid}_{tidx}"
+            c = self.model.addConstr(self.y[cid, tidx] == 0, name=name)
+            self._forbid_constraints.append(c)
+            added = True
+
+        if added:
+            self.model.update()
+        return added
+
+    def reset_forbid(self) -> None:
+        """Remove all constraints added by forbid_time_room()."""
+        for c in self._forbid_constraints:
+            self.model.remove(c)
+        self._forbid_constraints.clear()
+        self.model.update()
+
+    def reserve_room_times(self, reserved_room_times: set) -> int:
+        """
+        Pre-block room-time combinations already claimed by earlier partitions.
+
+        For every x[cid,tidx,rid] variable in this model, if (rid, time_bits)
+        overlaps with any entry in ``reserved_room_times``, add x == 0.
+
+        This enables conflict-free sequential solving: each sub-MIP is told
+        which (room, time) slots are already occupied before it is solved, so
+        room double-booking is impossible by construction.
+
+        Parameters
+        ----------
+        reserved_room_times : set of (rid, time_bits) where
+            time_bits = (weeks_bits_str, days_bits_str, start_int, length_int)
+
+        Returns
+        -------
+        int — number of constraints added (informational)
+        """
+        if not reserved_room_times:
+            return 0
+
+        # Group by room for O(1) lookup per variable
+        reserved_by_rid = defaultdict(list)
+        for (rid, tbits) in reserved_room_times:
+            reserved_by_rid[rid].append(tbits)
+
+        added = 0
+        for (cid, tidx, rid), var in self.x.items():
+            if rid == 'dummy' or rid not in reserved_by_rid:
+                continue
+            tbits = self.reader.classes[cid]["time_options"][tidx]["optional_time_bits"]
+            for reserved_bits in reserved_by_rid[rid]:
+                if self._time_bits_conflict(tbits, reserved_bits):
+                    name = f"reserve_{cid}_{tidx}_{rid}"
+                    c = self.model.addConstr(var == 0, name=name)
+                    self._forbid_constraints.append(c)
+                    added += 1
+                    break  # one reserved match is enough to block this var
+
+        if added:
+            self.model.update()
+        return added
+
+    def add_preassigned_time_constraints(
+        self,
+        preassigned: dict,
+        constraints: list,
+    ) -> int:
+        """
+        Enforce hard time constraints between classes in this sub-model and
+        classes that have already been assigned in earlier partitions.
+
+        For each constraint in ``constraints`` that mixes in-model classes with
+        pre-assigned classes:
+
+          NotOverlap / SameAttendees
+              Block every time option for the in-model class that would overlap
+              with the pre-assigned class's time.
+
+          SameTime
+              Block every time option that does NOT exactly match the
+              pre-assigned class's time (week/day/start/length all equal).
+
+        Other constraint types are silently skipped; they should be rare or
+        handled by the intra-partition MIP directly.
+
+        Parameters
+        ----------
+        preassigned : {cid: (tidx, rid)} assignments from already-solved partitions
+        constraints : hard constraint dicts that span in-model and pre-assigned classes
+
+        Returns
+        -------
+        int  — number of y[cid, tidx] variables blocked
+        """
+        blocked = 0
+        blocked_y: set = set()   # (cid, tidx) already blocked — avoid duplicate constrs
+
+        for cons in constraints:
+            ctype  = cons.get("type", "")
+            classes = cons["classes"]
+
+            in_model  = [c for c in classes if c in self.class_to_time_options]
+            pre_asgnd = [(c, preassigned[c]) for c in classes if c in preassigned]
+
+            if not in_model or not pre_asgnd:
+                continue
+
+            if ctype in ("SameAttendees", "NotOverlap"):
+                for (other_cid, (other_tidx, _)) in pre_asgnd:
+                    if other_tidx is None:
+                        continue
+                    other_bits = (
+                        self.reader.classes[other_cid]
+                        ["time_options"][other_tidx]["optional_time_bits"]
+                    )
+                    for cid in in_model:
+                        for (_, tidx) in self.class_to_time_options.get(cid, []):
+                            if (cid, tidx) in blocked_y:
+                                continue
+                            my_bits = (
+                                self.reader.classes[cid]
+                                ["time_options"][tidx]["optional_time_bits"]
+                            )
+                            if self._time_bits_conflict(my_bits, other_bits, attendee=True):
+                                if (cid, tidx) in self.y:
+                                    c = self.model.addConstr(
+                                        self.y[cid, tidx] == 0,
+                                        name=f"cross_no_overlap_{cid}_{tidx}",
+                                    )
+                                    self._forbid_constraints.append(c)
+                                    blocked_y.add((cid, tidx))
+                                    blocked += 1
+
+            elif ctype == "SameTime":
+                for (other_cid, (other_tidx, _)) in pre_asgnd:
+                    if other_tidx is None:
+                        continue
+                    other_bits = (
+                        self.reader.classes[other_cid]
+                        ["time_options"][other_tidx]["optional_time_bits"]
+                    )
+                    for cid in in_model:
+                        for (_, tidx) in self.class_to_time_options.get(cid, []):
+                            if (cid, tidx) in blocked_y:
+                                continue
+                            my_bits = (
+                                self.reader.classes[cid]
+                                ["time_options"][tidx]["optional_time_bits"]
+                            )
+                            # Block everything that does NOT exactly match
+                            if my_bits != other_bits:
+                                if (cid, tidx) in self.y:
+                                    c = self.model.addConstr(
+                                        self.y[cid, tidx] == 0,
+                                        name=f"cross_same_time_{cid}_{tidx}",
+                                    )
+                                    self._forbid_constraints.append(c)
+                                    blocked_y.add((cid, tidx))
+                                    blocked += 1
+
+        if blocked:
+            self.model.update()
+        return blocked
+
+    @staticmethod
+    def _time_bits_conflict(bits1: tuple, bits2: tuple, attendee: bool = False) -> bool:
+        """Return True if two time_bits tuples represent conflicting schedules.
+
+        Parameters
+        ----------
+        attendee : bool
+            When False (default) uses strict overlap < (back-to-back is OK).
+            Used for room reservation: two classes can use the same room
+            consecutively without conflict.
+            When True uses inclusive overlap <= (back-to-back is a conflict).
+            Used for SameAttendees / NotOverlap cross-partition enforcement:
+            students cannot attend two consecutive classes with no gap.
+        """
+        w1, d1, s1, l1 = bits1
+        w2, d2, s2, l2 = bits2
+        # Slot overlap
+        if attendee:
+            if not (s1 <= s2 + l2 and s2 <= s1 + l1):
+                return False
+        else:
+            if not (s1 < s2 + l2 and s2 < s1 + l1):
+                return False
+        # Day overlap
+        if (int(d1, 2) & int(d2, 2)) == 0:
+            return False
+        # Week overlap
+        if (int(w1, 2) & int(w2, 2)) == 0:
+            return False
+        return True

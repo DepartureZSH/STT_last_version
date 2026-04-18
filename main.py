@@ -54,8 +54,8 @@ def _parse_args() -> argparse.Namespace:
         help="Path to config YAML (default: config.yaml)",
     )
     p.add_argument(
-        "--technique", choices=["MIP", "hybrid"], default=None,
-        help="Solver technique: 'MIP' or 'hybrid'. "
+        "--technique", choices=["MIP", "hybrid", "divide_conquer"], default=None,
+        help="Solver technique: 'MIP', 'hybrid', or 'divide_conquer'. "
              "Overrides config.yaml config.technique.",
     )
     p.add_argument(
@@ -65,6 +65,11 @@ def _parse_args() -> argparse.Namespace:
     p.add_argument(
         "--time-limit", type=int, default=None,
         help="MIP time limit in seconds (overrides config.yaml)",
+    )
+    p.add_argument(
+        "--num-solutions", type=int, default=None,
+        help="Number of solutions to collect in the Gurobi pool "
+             "(overrides config.yaml train.MIP.PoolSolutions)",
     )
     return p.parse_args()
 
@@ -88,6 +93,8 @@ def main() -> int:
         config.setdefault("config", {})["technique"] = args.technique
     if args.time_limit:
         config.setdefault("train", {}).setdefault("MIP", {})["time_limit"] = args.time_limit
+    if args.num_solutions:
+        config.setdefault("train", {}).setdefault("MIP", {})["PoolSolutions"] = args.num_solutions
 
     technique = config.get("config", {}).get("technique", "MIP")
 
@@ -111,6 +118,8 @@ def main() -> int:
     # ── Run solver ───────────────────────────────────────────────────────────
     if technique == "hybrid":
         return _run_hybrid(reader, config, output_path, logger)
+    elif technique == "divide_conquer":
+        return _run_divide_conquer(reader, config, output_path, logger)
     else:
         return _run_mip(reader, config, output_path, logger)
 
@@ -155,6 +164,43 @@ def _run_hybrid(reader, config, output_path, logger) -> int:
 
     hybrid.save_solution(result, output_path)
     logger.info(f"Solution saved to: {output_path}")
+    return 0
+
+
+def _run_divide_conquer(reader, config, output_path, logger) -> int:
+    from src.hybrid.divide_conquer_solver import DivideConquerSolver
+
+    logger.info("=== Divide & Conquer Solver ===")
+    dc = DivideConquerSolver(reader, config, logger)
+    result = dc.solve()
+
+    logger.info(
+        f"\nDivide & Conquer result: success={result.success}, "
+        f"partitions={result.partitions_solved}, "
+        f"mip_calls={result.total_mip_calls}, "
+        f"conflicts={result.total_conflicts}, "
+        f"backtracks={result.total_backtracks}, "
+        f"time={result.total_time_sec:.1f}s, "
+        f"termination={result.termination}"
+    )
+
+    # Save the solution regardless of strict success flag so the validator
+    # can be used to inspect partial results; exit code reflects quality.
+    if result.assignments:
+        dc.save_solution(result, output_path)
+        logger.info(f"Solution saved to: {output_path}")
+    else:
+        logger.error("Divide & Conquer: no assignments produced — nothing to save")
+        return 1
+
+    if not result.success:
+        logger.warning(
+            f"Divide & Conquer: solution has remaining issues "
+            f"(violations={result.total_conflicts}, "
+            f"unassigned={len(reader.classes) - len(result.assignments)})"
+        )
+        return 1
+
     return 0
 
 
