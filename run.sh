@@ -1,0 +1,2 @@
+conda activate MARL
+nohup python -u main.py --instance data/source/reduced/muni-fi-spr16.xml --technique divide_conquer --time-limit 864000 > /home/scxsz1/zsh/FYP/STT_last_version/solutions/running1.log  2>&1 &
